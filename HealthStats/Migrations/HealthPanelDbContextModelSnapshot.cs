@@ -44,9 +44,9 @@ namespace HealthStats.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Metric")
+                    b.Property<string>("Units")
                         .HasColumnType("text")
-                        .HasColumnName("metric");
+                        .HasColumnName("units");
 
                     b.Property<string>("Name")
                         .HasColumnType("text")

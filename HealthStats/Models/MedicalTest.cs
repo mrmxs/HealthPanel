@@ -1,12 +1,12 @@
-using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthStats.Models
 {
+    [Index(nameof(Name), IsUnique = true)] //todo migration
     public class MedicalTest
     {
-        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Metric { get; set; }
+        public string Units { get; set; }
     }
 }
