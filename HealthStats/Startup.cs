@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 using Microsoft.EntityFrameworkCore;
-
 namespace HealthStats
 {
     public class Startup
@@ -22,7 +21,6 @@ namespace HealthStats
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -30,15 +28,15 @@ namespace HealthStats
         {
             services.AddControllers();
 
-            services.AddDbContext<HealthContext>(options =>
+            services.AddDbContext<HealthPanelDbContext>(options =>
                 options
-                    .UseNpgsql(Configuration.GetConnectionString("HealthContext"))
+                    .UseNpgsql(Configuration.GetConnectionString("HealthPanelDb"))
                     .UseSnakeCaseNamingConvention()
             );
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HealthStats", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Stats", Version = "v1" });
             });
         }
 
@@ -49,7 +47,7 @@ namespace HealthStats
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthStats v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Stats v1"));
             }
 
             app.UseHttpsRedirection();
