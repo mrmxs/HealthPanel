@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace HealthStats.Models
+namespace HealthPanel.Stats.Models
 {
     [Index(nameof(Name), IsUnique = true)] //todo migration
     public class MedicalTest

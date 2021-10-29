@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using HealthStats.Models;
+using HealthPanel.Stats.Models;
 
-namespace HealthStats
+namespace HealthPanel.Stats
 {
     public class HealthPanelDbContext : DbContext
     {

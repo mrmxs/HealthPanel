@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 using Microsoft.EntityFrameworkCore;
-namespace HealthStats
+namespace HealthPanel.Stats
 {
     public class Startup
     {

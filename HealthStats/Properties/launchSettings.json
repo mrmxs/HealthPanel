@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "HealthStats": {
+    "Stats": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
