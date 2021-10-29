@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B4592430-8E8C-42BC-BEDA-F35490B5141B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthPanel.Core", "src\HealthPanel.Core\HealthPanel.Core.csproj", "{A62BF13C-6970-4F77-AB16-F51E2ACF6B6B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthPanel.Infrastructure", "src\HealthPanel.Infrastructure\HealthPanel.Infrastructure.csproj", "{6029B5DA-2BF4-44D8-AC98-B38E585BB61F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,17 +12,5 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A62BF13C-6970-4F77-AB16-F51E2ACF6B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A62BF13C-6970-4F77-AB16-F51E2ACF6B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A62BF13C-6970-4F77-AB16-F51E2ACF6B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A62BF13C-6970-4F77-AB16-F51E2ACF6B6B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6029B5DA-2BF4-44D8-AC98-B38E585BB61F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6029B5DA-2BF4-44D8-AC98-B38E585BB61F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6029B5DA-2BF4-44D8-AC98-B38E585BB61F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6029B5DA-2BF4-44D8-AC98-B38E585BB61F}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A62BF13C-6970-4F77-AB16-F51E2ACF6B6B} = {B4592430-8E8C-42BC-BEDA-F35490B5141B}
-		{6029B5DA-2BF4-44D8-AC98-B38E585BB61F} = {B4592430-8E8C-42BC-BEDA-F35490B5141B}
 	EndGlobalSection
 EndGlobal
