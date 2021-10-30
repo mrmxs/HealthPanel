@@ -1,15 +1,11 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HealthStats.Models
+namespace HealthPanel.Stats.Models
 {
     public class LabMedicalTest
     {
-        [Key]
         public int Id { get; set; }
-        [ForeignKey("Lab")]
+        // [ForeignKey("Lab")]
         public int LabId { get; set; }
-        [ForeignKey("FK_MedicalTest")]
+        // [ForeignKey("FK_MedicalTest")]
         public int TestId { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }

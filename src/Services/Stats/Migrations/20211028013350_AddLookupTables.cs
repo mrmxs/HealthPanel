@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace HealthStats.Migrations
+namespace HealthPanel.Stats.Migrations
 {
     public partial class AddLookupTables : Migration
     {
@@ -27,7 +27,7 @@ namespace HealthStats.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
-                    metric = table.Column<string>(type: "text", nullable: true)
+                    units = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
