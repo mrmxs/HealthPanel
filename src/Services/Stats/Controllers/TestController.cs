@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HealthPanel.Stats;
-using HealthPanel.Stats.Models;
+using HealthPanel.Core.Entities;
+using HealthPanel.Infrastructure.Data;
 
-namespace HealthPanel.Stats.Controllers
+namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

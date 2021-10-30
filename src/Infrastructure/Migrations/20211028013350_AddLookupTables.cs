@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace HealthPanel.Stats.Migrations
+namespace HealthPanel.Infrastructure.Migrations
 {
     public partial class AddLookupTables : Migration
     {

@@ -13,7 +13,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 using Microsoft.EntityFrameworkCore;
-namespace HealthPanel.Stats
+
+using HealthPanel.Infrastructure.Data;
+
+namespace HealthPanel.Services.Stats
 {
     public class Startup
     {
@@ -28,10 +31,11 @@ namespace HealthPanel.Stats
         {
             services.AddControllers();
 
-            services.AddDbContext<HealthPanelDbContext>(options =>
-                options
-                    .UseNpgsql(Configuration.GetConnectionString("HealthPanelDb"))
-                    .UseSnakeCaseNamingConvention()
+            services.AddDbContext<HealthPanelDbContext>(
+                // options =>
+                // options
+                //     .UseNpgsql(Configuration.GetConnectionString("HealthPanelDb"))
+                //     .UseSnakeCaseNamingConvention()
             );
 
             services.AddSwaggerGen(c =>
