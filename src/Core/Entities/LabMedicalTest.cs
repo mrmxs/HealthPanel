@@ -1,4 +1,4 @@
-namespace HealthPanel.Stats.Models
+namespace HealthPanel.Core.Entities
 {
     public class LabMedicalTest
     {

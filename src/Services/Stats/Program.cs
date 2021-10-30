@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace HealthPanel.Stats
+namespace HealthPanel.Services.Stats
 {
     public class Program
     {

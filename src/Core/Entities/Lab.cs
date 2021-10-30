@@ -1,8 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-
-namespace HealthPanel.Stats.Models
+namespace HealthPanel.Core.Entities
 {
-    [Index(nameof(Name), IsUnique = true)] //todo migration
+    // [Index(nameof(Name), IsUnique = true)] //todo
     public class Lab
     {
         public int Id { get; set; }

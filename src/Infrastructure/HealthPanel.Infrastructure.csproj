@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>    
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="*" />
+    <PackageReference Include="EFCore.NamingConventions" Version="*" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Core\HealthPanel.Core.csproj" />
   </ItemGroup>
