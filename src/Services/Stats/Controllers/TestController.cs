@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Infrastructure.Data;
+using HealthPanel.Services.Stats.Dtos;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestController : ControllerBase
+    public class TestController : AbstractController<MedicalTestDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -23,14 +24,16 @@ namespace HealthPanel.Services.Stats.Controllers
 
         // GET: api/Test
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MedicalTest>>> GetTests()
+        public override async Task<ActionResult<IEnumerable<MedicalTestDto>>> Get()
         {
-            return await _context.Tests.ToListAsync();
+            var entities = await _context.Tests.ToListAsync();
+            
+            return Ok(entities.Select(t => this.ConvertToDto(t)));
         }
 
         // GET: api/Test/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MedicalTest>> GetMedicalTest(int id)
+        public override async Task<ActionResult<MedicalTestDto>> Get(int id)
         {
             var medicalTest = await _context.Tests.FindAsync(id);
 
@@ -39,19 +42,23 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return medicalTest;
+            return Ok(this.ConvertToDto(medicalTest));
         }
 
         // PUT: api/Test/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMedicalTest(int id, MedicalTest medicalTest)
+        public override async Task<IActionResult> Put(int id, MedicalTestDto dto)
         {
-            if (id != medicalTest.Id)
+            if (id != dto.Id)
             {
                 return BadRequest();
             }
 
+            var medicalTest = await _context.Tests.FindAsync(id);
+                       
+            medicalTest.Name = dto.Name; //todo bad practice
+            medicalTest.Units = dto.Units;
             _context.Entry(medicalTest).State = EntityState.Modified;
 
             try
@@ -76,19 +83,20 @@ namespace HealthPanel.Services.Stats.Controllers
         // POST: api/Test
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<MedicalTest>> PostMedicalTest(MedicalTest medicalTest)
+        public override async Task<ActionResult<MedicalTestDto>> Post(MedicalTestDto dto)
         {
+            var medicalTest = ConvertToEntity(dto);
             _context.Tests.Add(medicalTest);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMedicalTest), new { id = medicalTest.Id }, medicalTest);
+            return CreatedAtAction(nameof(Post), new { id = medicalTest.Id }, medicalTest);
             // The C# nameof keyword is used to avoid hard-coding 
             // the action name in the CreatedAtAction call.
         }
 
         // DELETE: api/Test/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMedicalTest(int id)
+        public override async Task<IActionResult> Delete(int id)
         {
             var medicalTest = await _context.Tests.FindAsync(id);
             if (medicalTest == null)
@@ -105,6 +113,29 @@ namespace HealthPanel.Services.Stats.Controllers
         private bool MedicalTestExists(int id)
         {
             return _context.Tests.Any(e => e.Id == id);
+        }
+        
+        //todo place your refactor here
+        private MedicalTestDto ConvertToDto(object raw)
+        {
+            var entity = raw as MedicalTest; 
+            
+            return new MedicalTestDto
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Units = entity.Units,
+            };
+        }
+
+        private MedicalTest ConvertToEntity(MedicalTestDto dto)
+        {
+            return new MedicalTest
+            {
+                // Id = lab.Id,
+                Name = dto.Name,
+                Units = dto.Units,
+            };
         }
     }
 }
