@@ -3,6 +3,7 @@
   <ItemGroup>    
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="*" />
+    <!-- Microsoft.EntityFrameworkCore.Design is refered by startup project -->
     <PackageReference Include="EFCore.NamingConventions" Version="*" />
   </ItemGroup>
 
