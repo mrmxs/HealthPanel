@@ -1,9 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 namespace HealthPanel.Services.Stats.Dtos
 {
     public class LabMedicalTestDto : IDto
     {
         public int Id { get; internal set; }
-        public int LabId { get; set; }
+        public int HealthFacilityBranchId { get; set; }
         public string LabName { get; set; }
         public int TestId { get; set; }
         public string TestTitle { get; set; }
@@ -11,7 +12,7 @@ namespace HealthPanel.Services.Stats.Dtos
         public double Max { get; set; }
         
         // public int Id { get; internal set; }
-        // public int LabId { get; set; }
+        // public int HealthFacilityBranchId { get; set; }
         // public int TestId { get; set; }
         // public double Min { get; set; }
         // public double Max { get; set; }

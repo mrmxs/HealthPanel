@@ -63,7 +63,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             var labTest = await _context.LabTests.FindAsync(id);
                        
-            labTest.LabId = dto.LabId;
+            labTest.HealthFacilityBranchId = dto.HealthFacilityBranchId;
             labTest.TestId = dto.TestId;
             labTest.Min = dto.Min;
             labTest.Max = dto.Max;
@@ -94,7 +94,7 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<LabMedicalTestDto>> Post(LabMedicalTestDto dto)
         {
-            //todo: labId & testId validation -> repos
+            //todo: healthFacilityBranchId & testId validation -> repos
 
             _context.LabTests.Add(this.ConvertToEntity(dto));
             var resultId = await _context.SaveChangesAsync();
@@ -129,7 +129,7 @@ namespace HealthPanel.Services.Stats.Controllers
         //todo move to repository
         private async Task<IEnumerable<object>> GetEntities(LabMedicalTest entity) 
         {
-            var lab = await _context.Labs.FindAsync(entity.LabId);
+            var lab = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
             var test = await _context.Tests.FindAsync(entity.TestId);
 
             var entities = new List<object>{ entity, lab, test };
@@ -141,13 +141,13 @@ namespace HealthPanel.Services.Stats.Controllers
         private LabMedicalTestDto ConvertToDto(IEnumerable<object> entities)
         {
             var labTest = entities.ToArray()[0] as LabMedicalTest;
-            var lab = entities.ToArray()[1] as Lab;
+            var lab = entities.ToArray()[1] as HealthFacilityBranch;
             var test = entities.ToArray()[2] as MedicalTest;
 
             return new LabMedicalTestDto
             {
                 Id = labTest.Id,
-                LabId = labTest.LabId,
+                HealthFacilityBranchId = labTest.HealthFacilityBranchId,
                 LabName = lab.Name,
                 TestId = labTest.TestId,
                 TestTitle = test.Name,
@@ -160,7 +160,7 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             return new LabMedicalTest
             {
-                LabId = dto.LabId,
+                HealthFacilityBranchId = dto.HealthFacilityBranchId,
                 TestId = dto.TestId,
                 Min = dto.Min,
                 Max = dto.Max,
