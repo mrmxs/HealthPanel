@@ -1,9 +1,14 @@
+using HealthPanel.Core.Enums;
+
 namespace HealthPanel.Services.Stats.Dtos
 {
-    public class LabDto : IDto
+    public class HealthFacilityBranchDto : IDto
     {
         public int Id { get; set; }
+        public int HealthFacilityId { get; set; } 
         public string Name { get; set; }
+        public string Address { get; set; }
+        public string Type { get; set; }
         
         // public static explicit operator LabDto(Lab entity)
         // {
