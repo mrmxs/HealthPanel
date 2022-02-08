@@ -2,6 +2,7 @@
 using HealthPanel.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HealthPanel.Infrastructure.Migrations
 {
     [DbContext(typeof(HealthPanelDbContext))]
-    partial class HealthPanelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220208165549_TableLabsRenamedToHealthFacilityBranches")]
+    partial class TableLabsRenamedToHealthFacilityBranches
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,23 +57,10 @@ namespace HealthPanel.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("address");
-
-                    b.Property<int>("HealthFacilityId")
-                        .HasColumnType("integer")
-                        .HasColumnName("health_facility_id");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("type");
 
                     b.HasKey("Id")
                         .HasName("pk_health_facility_branches");
@@ -88,9 +77,9 @@ namespace HealthPanel.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("HealthFacilityBranchId")
+                    b.Property<int>("LabId")
                         .HasColumnType("integer")
-                        .HasColumnName("health_facility_branch_id");
+                        .HasColumnName("lab_id");
 
                     b.Property<double>("Max")
                         .HasColumnType("double precision")
