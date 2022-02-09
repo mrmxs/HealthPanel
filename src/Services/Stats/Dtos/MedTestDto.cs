@@ -1,6 +1,6 @@
 namespace HealthPanel.Services.Stats.Dtos
 {
-    public class MedicalTestDto : IDto
+    public class MedTestDto : IDto
     {
         public int Id { get; internal set; }
         public string Name { get; set; }
