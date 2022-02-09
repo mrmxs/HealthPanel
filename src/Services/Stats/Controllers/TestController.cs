@@ -13,7 +13,7 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestController : AbstractController<MedicalTestDto>
+    public class TestController : AbstractController<MedTestDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -24,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
         // GET: api/Test
         [HttpGet]
-        public override async Task<ActionResult<IEnumerable<MedicalTestDto>>> Get()
+        public override async Task<ActionResult<IEnumerable<MedTestDto>>> Get()
         {
             var entities = await _context.Tests.ToListAsync();
             
@@ -33,7 +33,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
         // GET: api/Test/5
         [HttpGet("{id}")]
-        public override async Task<ActionResult<MedicalTestDto>> Get(int id)
+        public override async Task<ActionResult<MedTestDto>> Get(int id)
         {
             var medicalTest = await _context.Tests.FindAsync(id);
 
@@ -48,7 +48,7 @@ namespace HealthPanel.Services.Stats.Controllers
         // PUT: api/Test/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public override async Task<IActionResult> Put(int id, MedicalTestDto dto)
+        public override async Task<IActionResult> Put(int id, MedTestDto dto)
         {
             if (id != dto.Id)
             {
@@ -67,7 +67,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MedicalTestExists(id))
+                if (!MedTestExists(id))
                 {
                     return NotFound();
                 }
@@ -83,7 +83,7 @@ namespace HealthPanel.Services.Stats.Controllers
         // POST: api/Test
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public override async Task<ActionResult<MedicalTestDto>> Post(MedicalTestDto dto)
+        public override async Task<ActionResult<MedTestDto>> Post(MedTestDto dto)
         {
             var medicalTest = ConvertToEntity(dto);
             _context.Tests.Add(medicalTest);
@@ -110,17 +110,17 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool MedicalTestExists(int id)
+        private bool MedTestExists(int id)
         {
             return _context.Tests.Any(e => e.Id == id);
         }
         
         //todo place your refactor here
-        private MedicalTestDto ConvertToDto(object raw)
+        private MedTestDto ConvertToDto(object raw)
         {
             var entity = raw as MedTest; 
             
-            return new MedicalTestDto
+            return new MedTestDto
             {
                 Id = entity.Id,
                 Name = entity.Name,
@@ -128,7 +128,7 @@ namespace HealthPanel.Services.Stats.Controllers
             };
         }
 
-        private MedTest ConvertToEntity(MedicalTestDto dto)
+        private MedTest ConvertToEntity(MedTestDto dto)
         {
             return new MedTest
             {

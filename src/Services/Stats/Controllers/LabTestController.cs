@@ -13,7 +13,7 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LabTestController : AbstractController<LabMedicalTestDto>
+    public class LabTestController : AbstractController<LabMedTestDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -24,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
         // GET: api/LabTest
         [HttpGet]
-        public override async Task<ActionResult<IEnumerable<LabMedicalTestDto>>> Get()
+        public override async Task<ActionResult<IEnumerable<LabMedTestDto>>> Get()
         {            
             var entities = await _context.LabTests.ToListAsync();
             
@@ -39,7 +39,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
         // GET: api/LabTest/5
         [HttpGet("{id}")]
-        public override async Task<ActionResult<LabMedicalTestDto>> Get(int id)
+        public override async Task<ActionResult<LabMedTestDto>> Get(int id)
         {
             var labMedicalTest = await _context.LabTests.FindAsync(id);
 
@@ -54,7 +54,7 @@ namespace HealthPanel.Services.Stats.Controllers
         // PUT: api/LabTest/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public override async Task<IActionResult> Put(int id, LabMedicalTestDto dto)
+        public override async Task<IActionResult> Put(int id, LabMedTestDto dto)
         {
             if (id != dto.Id)
             {
@@ -76,7 +76,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!LabMedicalTestExists(id))
+                if (!LabMedTestExists(id))
                 {
                     return NotFound();
                 }
@@ -92,7 +92,7 @@ namespace HealthPanel.Services.Stats.Controllers
         // POST: api/LabTest
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public override async Task<ActionResult<LabMedicalTestDto>> Post(LabMedicalTestDto dto)
+        public override async Task<ActionResult<LabMedTestDto>> Post(LabMedTestDto dto)
         {
             //todo: healthFacilityBranchId & testId validation -> repos
 
@@ -121,7 +121,7 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool LabMedicalTestExists(int id)
+        private bool LabMedTestExists(int id)
         {
             return _context.LabTests.Any(e => e.Id == id);
         }
@@ -138,13 +138,13 @@ namespace HealthPanel.Services.Stats.Controllers
         }
 
         //todo place your refactor here
-        private LabMedicalTestDto ConvertToDto(IEnumerable<object> entities)
+        private LabMedTestDto ConvertToDto(IEnumerable<object> entities)
         {
             var labTest = entities.ToArray()[0] as LabMedTest;
             var lab = entities.ToArray()[1] as HealthFacilityBranch;
             var test = entities.ToArray()[2] as MedTest;
 
-            return new LabMedicalTestDto
+            return new LabMedTestDto
             {
                 Id = labTest.Id,
                 HealthFacilityBranchId = labTest.HealthFacilityBranchId,
@@ -156,7 +156,7 @@ namespace HealthPanel.Services.Stats.Controllers
             };
         }
 
-        private LabMedTest ConvertToEntity(LabMedicalTestDto dto)
+        private LabMedTest ConvertToEntity(LabMedTestDto dto)
         {
             return new LabMedTest
             {

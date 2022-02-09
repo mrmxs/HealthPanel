@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace HealthPanel.Services.Stats.Dtos
 {
-    public class LabMedicalTestDto : IDto
+    public class LabMedTestDto : IDto
     {
         public int Id { get; internal set; }
         public int HealthFacilityBranchId { get; set; }
