@@ -118,7 +118,7 @@ namespace HealthPanel.Services.Stats.Controllers
         //todo place your refactor here
         private MedicalTestDto ConvertToDto(object raw)
         {
-            var entity = raw as MedicalTest; 
+            var entity = raw as MedTest; 
             
             return new MedicalTestDto
             {
@@ -128,9 +128,9 @@ namespace HealthPanel.Services.Stats.Controllers
             };
         }
 
-        private MedicalTest ConvertToEntity(MedicalTestDto dto)
+        private MedTest ConvertToEntity(MedicalTestDto dto)
         {
-            return new MedicalTest
+            return new MedTest
             {
                 // Id = lab.Id,
                 Name = dto.Name,

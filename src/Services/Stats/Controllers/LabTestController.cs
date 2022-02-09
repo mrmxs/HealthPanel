@@ -127,7 +127,7 @@ namespace HealthPanel.Services.Stats.Controllers
         }
 
         //todo move to repository
-        private async Task<IEnumerable<object>> GetEntities(LabMedicalTest entity) 
+        private async Task<IEnumerable<object>> GetEntities(LabMedTest entity) 
         {
             var lab = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
             var test = await _context.Tests.FindAsync(entity.TestId);
@@ -140,9 +140,9 @@ namespace HealthPanel.Services.Stats.Controllers
         //todo place your refactor here
         private LabMedicalTestDto ConvertToDto(IEnumerable<object> entities)
         {
-            var labTest = entities.ToArray()[0] as LabMedicalTest;
+            var labTest = entities.ToArray()[0] as LabMedTest;
             var lab = entities.ToArray()[1] as HealthFacilityBranch;
-            var test = entities.ToArray()[2] as MedicalTest;
+            var test = entities.ToArray()[2] as MedTest;
 
             return new LabMedicalTestDto
             {
@@ -156,9 +156,9 @@ namespace HealthPanel.Services.Stats.Controllers
             };
         }
 
-        private LabMedicalTest ConvertToEntity(LabMedicalTestDto dto)
+        private LabMedTest ConvertToEntity(LabMedicalTestDto dto)
         {
-            return new LabMedicalTest
+            return new LabMedTest
             {
                 HealthFacilityBranchId = dto.HealthFacilityBranchId,
                 TestId = dto.TestId,
