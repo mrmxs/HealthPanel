@@ -5,9 +5,11 @@ namespace HealthPanel.Services.Stats.Dtos
     {
         public int Id { get; internal set; }
         public int HealthFacilityBranchId { get; set; }
-        public string LabName { get; set; }
+        public string HealthFacilityBranchName { get; set; }
         public int TestId { get; set; }
-        public string TestTitle { get; set; }
+        public string TestName { get; set; }
+        public string CustomTestName { get; set; }
+        public string Units { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
         
