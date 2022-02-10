@@ -2,6 +2,7 @@
 using HealthPanel.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HealthPanel.Infrastructure.Migrations
 {
     [DbContext(typeof(HealthPanelDbContext))]
-    partial class HealthPanelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220210051713_EntitiesLabMadTestAndExaminationPropertyCustomNameAdded")]
+    partial class EntitiesLabMadTestAndExaminationPropertyCustomNameAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
