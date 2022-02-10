@@ -28,7 +28,13 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             var entities = await _context.Examinations.ToListAsync();
             
-            return Ok(entities.Select(t => this.ConvertToDto(t)));
+            var dtos = entities
+                .Select(async p => this.ConvertToDto(await this.GetEntities(p)))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList();
+            
+            return Ok(dtos);
         }
 
         // GET: api/Examination/5
@@ -42,7 +48,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(examination));;
+            return Ok(this.ConvertToDto(await this.GetEntities(examination)));
         }
 
         // PUT: api/Examination/5
@@ -59,6 +65,8 @@ namespace HealthPanel.Services.Stats.Controllers
 
             examination.HealthFacilityBranchId = dto.HealthFacilityBranchId;
             examination.TestId = dto.TestId; //todo bad practice
+            examination.CustomName = dto.CustomTestName;
+            
             _context.Entry(examination).State = EntityState.Modified;
 
             try
@@ -85,11 +93,15 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<ExaminationDto>> Post(ExaminationDto dto)
         {
-            var examination = ConvertToEntity(dto);
-            _context.Examinations.Add(examination);
-            await _context.SaveChangesAsync();
+            //todo: equal LabTestController: healthFacilityBranchId & testId validation -> repos
 
-            return CreatedAtAction(nameof(Post), new { id = examination.Id }, examination);
+            _context.Examinations.Add(this.ConvertToEntity(dto));
+            var resultId = await _context.SaveChangesAsync();
+
+            var examination = await _context.Examinations.FindAsync(resultId);
+            var result = this.ConvertToDto(await this.GetEntities(examination));
+
+            return CreatedAtAction(nameof(Post), new { id = resultId }, result);
         }
 
         // DELETE: api/Examination/5
@@ -113,15 +125,31 @@ namespace HealthPanel.Services.Stats.Controllers
             return _context.Examinations.Any(e => e.Id == id);
         }
 
-        private object ConvertToDto(object raw)
+        //todo move to repository
+        private async Task<IEnumerable<object>> GetEntities(Examination entity) 
         {
-            var entity = raw as Examination;
+            var branch = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
+            var test = await _context.Tests.FindAsync(entity.TestId);
+
+            var entities = new List<object>{ entity, branch, test };
+            
+            return entities;
+        }
+
+        private object ConvertToDto(IEnumerable<object> entities)
+        {
+            var entity = entities.ToArray()[0] as Examination;
+            var branch = entities.ToArray()[1] as HealthFacilityBranch;
+            var test = entities.ToArray()[2] as MedTest;
 
             return new ExaminationDto
             {
                 Id = entity.Id,
                 HealthFacilityBranchId = entity.HealthFacilityBranchId,
+                HealthFacilityBranchName = branch.Name,
                 TestId = entity.TestId,
+                TestName = test.Name,
+                CustomTestName = entity.CustomName,
             };
         }
 
@@ -132,6 +160,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 // Id = dto.Id,
                 HealthFacilityBranchId = dto.HealthFacilityBranchId,
                 TestId = dto.TestId,
+                CustomName = dto.CustomTestName,
             };
         }
     }

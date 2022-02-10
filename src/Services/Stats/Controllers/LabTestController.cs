@@ -65,6 +65,7 @@ namespace HealthPanel.Services.Stats.Controllers
                        
             labTest.HealthFacilityBranchId = dto.HealthFacilityBranchId;
             labTest.TestId = dto.TestId;
+            labTest.CustomName = dto.CustomTestName;
             labTest.Min = dto.Min;
             labTest.Max = dto.Max;
 
@@ -94,7 +95,7 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<LabMedTestDto>> Post(LabMedTestDto dto)
         {
-            //todo: healthFacilityBranchId & testId validation -> repos
+            //todo: equal ExaminationController: healthFacilityBranchId & testId validation -> repos
 
             _context.LabTests.Add(this.ConvertToEntity(dto));
             var resultId = await _context.SaveChangesAsync();
@@ -129,10 +130,10 @@ namespace HealthPanel.Services.Stats.Controllers
         //todo move to repository
         private async Task<IEnumerable<object>> GetEntities(LabMedTest entity) 
         {
-            var lab = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
+            var branch = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
             var test = await _context.Tests.FindAsync(entity.TestId);
 
-            var entities = new List<object>{ entity, lab, test };
+            var entities = new List<object>{ entity, branch, test };
             
             return entities;
         }
@@ -140,19 +141,21 @@ namespace HealthPanel.Services.Stats.Controllers
         //todo place your refactor here
         private LabMedTestDto ConvertToDto(IEnumerable<object> entities)
         {
-            var labTest = entities.ToArray()[0] as LabMedTest;
-            var lab = entities.ToArray()[1] as HealthFacilityBranch;
+            var entity = entities.ToArray()[0] as LabMedTest;
+            var branch = entities.ToArray()[1] as HealthFacilityBranch;
             var test = entities.ToArray()[2] as MedTest;
 
             return new LabMedTestDto
             {
-                Id = labTest.Id,
-                HealthFacilityBranchId = labTest.HealthFacilityBranchId,
-                LabName = lab.Name,
-                TestId = labTest.TestId,
-                TestTitle = test.Name,
-                Min = labTest.Min,
-                Max = labTest.Max,
+                Id = entity.Id,
+                HealthFacilityBranchId = entity.HealthFacilityBranchId,
+                HealthFacilityBranchName = branch.Name,
+                TestId = entity.TestId,
+                TestName = test.Name,
+                CustomTestName = entity.CustomName,
+                Units = test.Units,
+                Min = entity.Min,
+                Max = entity.Max,
             };
         }
 
@@ -162,6 +165,7 @@ namespace HealthPanel.Services.Stats.Controllers
             {
                 HealthFacilityBranchId = dto.HealthFacilityBranchId,
                 TestId = dto.TestId,
+                CustomName = dto.CustomTestName,
                 Min = dto.Min,
                 Max = dto.Max,
             };
