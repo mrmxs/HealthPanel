@@ -14,7 +14,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HealthFacilityBranchController : AbstractController<HealthFacilityBranchDto>
+    public class HealthFacilityBranchController 
+        : AbstractController<HealthFacilityBranch, HealthFacilityBranchDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -29,7 +30,13 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             var entities = await _context.HealthFacilityBranches.ToListAsync();
 
-            return Ok(entities.Select(p => this.ConvertToDto(p)));
+            var dtos = entities
+                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList();
+
+            return Ok(dtos);
         }
 
         // GET: api/HealthFacilityBranch/5
@@ -43,7 +50,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(branch));
+            return Ok(await this.EntityToDtoAsync(branch));
         }
 
         // PUT: api/HealthFacilityBranch/5
@@ -58,7 +65,11 @@ namespace HealthPanel.Services.Stats.Controllers
 
             var branch = await _context.HealthFacilityBranches.FindAsync(id);
                        
+            branch.HealthFacilityId = dto.HealthFacilityId;
             branch.Name = dto.Name;
+            branch.Address = dto.Address;
+            branch.Type = (HealthFacilityBranchType)
+                Enum.Parse(typeof(HealthFacilityBranchType), dto.Type);
             _context.Entry(branch).State = EntityState.Modified;
 
             try
@@ -113,18 +124,9 @@ namespace HealthPanel.Services.Stats.Controllers
             return _context.HealthFacilityBranches.Any(e => e.Id == id);
         }
 
-        private HealthFacilityBranchDto ConvertToDto(object raw) {
-            var entity = raw as HealthFacilityBranch;
-            
-            return new HealthFacilityBranchDto
-            {
-                Id = entity.Id,
-                HealthFacilityId = entity.HealthFacilityId,
-                Name = entity.Name,
-                Address = entity.Address,
-                Type = entity.Type.ToString(),
-            };
-        }
+        protected override async Task<HealthFacilityBranchDto>
+            EntityToDtoAsync(HealthFacilityBranch entity)
+                => new HealthFacilityBranchDto(entity);
 
         private HealthFacilityBranch ConvertToEntity(HealthFacilityBranchDto branch) {
             return new HealthFacilityBranch

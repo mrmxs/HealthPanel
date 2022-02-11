@@ -13,7 +13,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : AbstractController<UserDto>
+    public class UserController
+        : AbstractController<User, UserDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -28,7 +29,13 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             var entities = await _context.Users.ToListAsync();
 
-            return Ok(entities.Select(t => this.ConvertToDto(t)));
+            var dtos = entities
+                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList();
+
+            return Ok(dtos);
         }
 
         // GET: api/User/5
@@ -42,7 +49,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(user));
+            return Ok(await this.EntityToDtoAsync(user));
         }
 
         // PUT: api/User/5
@@ -112,16 +119,8 @@ namespace HealthPanel.Services.Stats.Controllers
             return _context.Users.Any(e => e.Id == id);
         }
 
-        private object ConvertToDto(object raw)
-        {
-            var entity = raw as User;
-
-            return new UserDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-            };
-        }
+        protected override async Task<UserDto> EntityToDtoAsync(User entity)
+            => new UserDto(entity);
 
         private User ConvertToEntity(UserDto dto)
         {

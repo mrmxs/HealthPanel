@@ -13,7 +13,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LabTestController : AbstractController<LabMedTestDto>
+    public class LabTestController
+        : AbstractController<LabMedTest, LabMedTestDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -29,7 +30,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.LabTests.ToListAsync();
             
             var dtos = entities
-                .Select(async p => this.ConvertToDto(await this.GetEntities(p)))
+                .Select(async p => await this.EntityToDtoAsync(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -48,7 +49,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(await this.GetEntities(labMedicalTest)));
+            return Ok(await this.EntityToDtoAsync(labMedicalTest));
         }
 
         // PUT: api/LabTest/5
@@ -101,7 +102,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var resultId = await _context.SaveChangesAsync();
 
             var labMedicalTest = await _context.LabTests.FindAsync(resultId);
-            var result = this.ConvertToDto(await this.GetEntities(labMedicalTest));
+            var result = await this.EntityToDtoAsync(labMedicalTest);
 
             return CreatedAtAction(nameof(Post), new { id = resultId }, result);
         }
@@ -122,42 +123,19 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
+        //todo place your refactor here
         private bool LabMedTestExists(int id)
         {
             return _context.LabTests.Any(e => e.Id == id);
         }
 
-        //todo move to repository
-        private async Task<IEnumerable<object>> GetEntities(LabMedTest entity) 
-        {
-            var branch = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
-            var test = await _context.Tests.FindAsync(entity.TestId);
-
-            var entities = new List<object>{ entity, branch, test };
-            
-            return entities;
-        }
-
-        //todo place your refactor here
-        private LabMedTestDto ConvertToDto(IEnumerable<object> entities)
-        {
-            var entity = entities.ToArray()[0] as LabMedTest;
-            var branch = entities.ToArray()[1] as HealthFacilityBranch;
-            var test = entities.ToArray()[2] as MedTest;
-
-            return new LabMedTestDto
-            {
-                Id = entity.Id,
-                HealthFacilityBranchId = entity.HealthFacilityBranchId,
-                HealthFacilityBranchName = branch.Name,
-                TestId = entity.TestId,
-                TestName = test.Name,
-                CustomTestName = entity.CustomName,
-                Units = test.Units,
-                Min = entity.Min,
-                Max = entity.Max,
-            };
-        }
+        protected override async Task<LabMedTestDto> EntityToDtoAsync(LabMedTest entity)
+            => new LabMedTestDto( //todo move to repository
+                labTestEntity:  entity,
+                branchEntity:   await _context.HealthFacilityBranches
+                    .FindAsync(entity.HealthFacilityBranchId),
+                medTestEntity:  await _context.Tests.FindAsync(entity.TestId)
+            );
 
         private LabMedTest ConvertToEntity(LabMedTestDto dto)
         {
