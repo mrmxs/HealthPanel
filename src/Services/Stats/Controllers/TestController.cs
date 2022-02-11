@@ -13,7 +13,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestController : AbstractController<MedTestDto>
+    public class TestController
+        : AbstractController<MedTest, MedTestDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -28,7 +29,13 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             var entities = await _context.Tests.ToListAsync();
             
-            return Ok(entities.Select(t => this.ConvertToDto(t)));
+            var dtos = entities
+                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList();
+
+            return Ok(dtos);
         }
 
         // GET: api/Test/5
@@ -42,7 +49,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(medicalTest));
+            return Ok(await this.EntityToDtoAsync(medicalTest));
         }
 
         // PUT: api/Test/5
@@ -114,20 +121,10 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             return _context.Tests.Any(e => e.Id == id);
         }
-        
-        //todo place your refactor here
-        private MedTestDto ConvertToDto(object raw)
-        {
-            var entity = raw as MedTest; 
-            
-            return new MedTestDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Units = entity.Units,
-            };
-        }
 
+        protected override async Task<MedTestDto> EntityToDtoAsync(MedTest entity)
+            => new MedTestDto(entity);
+        
         private MedTest ConvertToEntity(MedTestDto dto)
         {
             return new MedTest
