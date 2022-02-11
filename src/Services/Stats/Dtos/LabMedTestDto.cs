@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using HealthPanel.Core.Entities;
+
 namespace HealthPanel.Services.Stats.Dtos
 {
     public class LabMedTestDto : IDto
@@ -13,11 +15,21 @@ namespace HealthPanel.Services.Stats.Dtos
         public double Min { get; set; }
         public double Max { get; set; }
         
-        // public int Id { get; internal set; }
-        // public int HealthFacilityBranchId { get; set; }
-        // public int TestId { get; set; }
-        // public double Min { get; set; }
-        // public double Max { get; set; }
+        public LabMedTestDto (            
+            LabMedTest labTestEntity,
+            HealthFacilityBranch branchEntity,
+            MedTest medTestEntity)
+        {
+            this.Id = labTestEntity.Id;
+            this.HealthFacilityBranchId = labTestEntity.HealthFacilityBranchId;
+            this.HealthFacilityBranchName = branchEntity.Name;
+            this.TestId = labTestEntity.TestId;
+            this.TestName = medTestEntity.Name;
+            this.CustomTestName = labTestEntity.CustomName;
+            this.Units = medTestEntity.Units;
+            this.Min = labTestEntity.Min;
+            this.Max = labTestEntity.Max;
+        }
 
         // public static explicit operator LabMedicalTestDto(LabMedicalTest entity)
         // {
