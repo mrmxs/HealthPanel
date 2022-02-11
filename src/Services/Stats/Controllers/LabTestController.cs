@@ -30,7 +30,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.LabTests.ToListAsync();
             
             var dtos = entities
-                .Select(async p => await this.EntityToDto(p))
+                .Select(async p => await this.EntityToDtoAsync(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -49,7 +49,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDto(labMedicalTest));
+            return Ok(await this.EntityToDtoAsync(labMedicalTest));
         }
 
         // PUT: api/LabTest/5
@@ -102,7 +102,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var resultId = await _context.SaveChangesAsync();
 
             var labMedicalTest = await _context.LabTests.FindAsync(resultId);
-            var result = await this.EntityToDto(labMedicalTest);
+            var result = await this.EntityToDtoAsync(labMedicalTest);
 
             return CreatedAtAction(nameof(Post), new { id = resultId }, result);
         }
@@ -129,17 +129,13 @@ namespace HealthPanel.Services.Stats.Controllers
             return _context.LabTests.Any(e => e.Id == id);
         }
 
-        protected override async Task<LabMedTestDto> EntityToDto(LabMedTest entity)
-        {
-            //todo move to repository
-
-            return new LabMedTestDto(
+        protected override async Task<LabMedTestDto> EntityToDtoAsync(LabMedTest entity)
+            => new LabMedTestDto( //todo move to repository
                 labTestEntity:  entity,
                 branchEntity:   await _context.HealthFacilityBranches
                     .FindAsync(entity.HealthFacilityBranchId),
                 medTestEntity:  await _context.Tests.FindAsync(entity.TestId)
             );
-        }
 
         private LabMedTest ConvertToEntity(LabMedTestDto dto)
         {
