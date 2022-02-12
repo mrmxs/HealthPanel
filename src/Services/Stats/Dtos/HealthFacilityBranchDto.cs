@@ -13,6 +13,8 @@ namespace HealthPanel.Services.Stats.Dtos
         public string Type { get; set; }
         
 
+        public HealthFacilityBranchDto() {}
+
         public HealthFacilityBranchDto(HealthFacilityBranch entity)
         {
             this.Id = entity.Id;

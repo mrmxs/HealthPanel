@@ -78,7 +78,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!LabMedTestExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -123,8 +123,7 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        //todo place your refactor here
-        private bool LabMedTestExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.LabTests.Any(e => e.Id == id);
         }

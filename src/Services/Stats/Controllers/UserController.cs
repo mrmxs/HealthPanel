@@ -73,7 +73,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -114,7 +114,7 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool UserExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.Users.Any(e => e.Id == id);
         }

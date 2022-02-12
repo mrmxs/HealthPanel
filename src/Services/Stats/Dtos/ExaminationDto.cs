@@ -11,6 +11,9 @@ namespace HealthPanel.Services.Stats.Dtos
         public string TestName { get; set; }
         public string CustomTestName { get; set; }
 
+
+        public ExaminationDto() {}
+
         public ExaminationDto(
             Examination examinationEntity,
             HealthFacilityBranch branchEntity,

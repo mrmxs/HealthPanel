@@ -15,6 +15,8 @@ namespace HealthPanel.Services.Stats.Dtos
         public double Min { get; set; }
         public double Max { get; set; }
         
+        public LabMedTestDto () {}            
+        
         public LabMedTestDto (            
             LabMedTest labTestEntity,
             HealthFacilityBranch branchEntity,
