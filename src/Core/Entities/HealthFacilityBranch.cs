@@ -4,7 +4,7 @@ using HealthPanel.Core.Enums;
 namespace HealthPanel.Core.Entities
 {
     // [Index(nameof(Name), IsUnique = true)] //todo
-    public class HealthFacilityBranch
+    public class HealthFacilityBranch : IEntity
     {
         public int Id { get; internal set; }
         [Required]

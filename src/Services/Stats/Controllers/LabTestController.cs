@@ -13,7 +13,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LabTestController : AbstractController<LabMedTestDto>
+    public class LabTestController
+        : AbstractController<LabTest, LabTestDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -24,12 +25,12 @@ namespace HealthPanel.Services.Stats.Controllers
 
         // GET: api/LabTest
         [HttpGet]
-        public override async Task<ActionResult<IEnumerable<LabMedTestDto>>> Get()
+        public override async Task<ActionResult<IEnumerable<LabTestDto>>> Get()
         {            
             var entities = await _context.LabTests.ToListAsync();
             
             var dtos = entities
-                .Select(async p => this.ConvertToDto(await this.GetEntities(p)))
+                .Select(async p => await this.EntityToDtoAsync(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -39,22 +40,22 @@ namespace HealthPanel.Services.Stats.Controllers
 
         // GET: api/LabTest/5
         [HttpGet("{id}")]
-        public override async Task<ActionResult<LabMedTestDto>> Get(int id)
+        public override async Task<ActionResult<LabTestDto>> Get(int id)
         {
-            var labMedicalTest = await _context.LabTests.FindAsync(id);
+            var labTest = await _context.LabTests.FindAsync(id);
 
-            if (labMedicalTest == null)
+            if (labTest == null)
             {
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(await this.GetEntities(labMedicalTest)));
+            return Ok(await this.EntityToDtoAsync(labTest));
         }
 
         // PUT: api/LabTest/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public override async Task<IActionResult> Put(int id, LabMedTestDto dto)
+        public override async Task<IActionResult> Put(int id, LabTestDto dto)
         {
             if (id != dto.Id)
             {
@@ -77,7 +78,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!LabMedTestExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -93,15 +94,15 @@ namespace HealthPanel.Services.Stats.Controllers
         // POST: api/LabTest
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public override async Task<ActionResult<LabMedTestDto>> Post(LabMedTestDto dto)
+        public override async Task<ActionResult<LabTestDto>> Post(LabTestDto dto)
         {
             //todo: equal ExaminationController: healthFacilityBranchId & testId validation -> repos
 
             _context.LabTests.Add(this.ConvertToEntity(dto));
             var resultId = await _context.SaveChangesAsync();
 
-            var labMedicalTest = await _context.LabTests.FindAsync(resultId);
-            var result = this.ConvertToDto(await this.GetEntities(labMedicalTest));
+            var labTest = await _context.LabTests.FindAsync(resultId);
+            var result = await this.EntityToDtoAsync(labTest);
 
             return CreatedAtAction(nameof(Post), new { id = resultId }, result);
         }
@@ -110,58 +111,34 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var labMedicalTest = await _context.LabTests.FindAsync(id);
-            if (labMedicalTest == null)
+            var labTest = await _context.LabTests.FindAsync(id);
+            if (labTest == null)
             {
                 return NotFound();
             }
 
-            _context.LabTests.Remove(labMedicalTest);
+            _context.LabTests.Remove(labTest);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool LabMedTestExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.LabTests.Any(e => e.Id == id);
         }
 
-        //todo move to repository
-        private async Task<IEnumerable<object>> GetEntities(LabMedTest entity) 
+        protected override async Task<LabTestDto> EntityToDtoAsync(LabTest entity)
+            => new LabTestDto( //todo move to repository
+                labTestEntity:  entity,
+                branchEntity:   await _context.HealthFacilityBranches
+                    .FindAsync(entity.HealthFacilityBranchId),
+                medTestEntity:  await _context.Tests.FindAsync(entity.TestId)
+            );
+
+        private LabTest ConvertToEntity(LabTestDto dto)
         {
-            var branch = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
-            var test = await _context.Tests.FindAsync(entity.TestId);
-
-            var entities = new List<object>{ entity, branch, test };
-            
-            return entities;
-        }
-
-        //todo place your refactor here
-        private LabMedTestDto ConvertToDto(IEnumerable<object> entities)
-        {
-            var entity = entities.ToArray()[0] as LabMedTest;
-            var branch = entities.ToArray()[1] as HealthFacilityBranch;
-            var test = entities.ToArray()[2] as MedTest;
-
-            return new LabMedTestDto
-            {
-                Id = entity.Id,
-                HealthFacilityBranchId = entity.HealthFacilityBranchId,
-                HealthFacilityBranchName = branch.Name,
-                TestId = entity.TestId,
-                TestName = test.Name,
-                CustomTestName = entity.CustomName,
-                Units = test.Units,
-                Min = entity.Min,
-                Max = entity.Max,
-            };
-        }
-
-        private LabMedTest ConvertToEntity(LabMedTestDto dto)
-        {
-            return new LabMedTest
+            return new LabTest
             {
                 HealthFacilityBranchId = dto.HealthFacilityBranchId,
                 TestId = dto.TestId,

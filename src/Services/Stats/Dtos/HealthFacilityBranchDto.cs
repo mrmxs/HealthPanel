@@ -1,4 +1,6 @@
 using HealthPanel.Core.Enums;
+using HealthPanel.Core.Entities;
+
 
 namespace HealthPanel.Services.Stats.Dtos
 {
@@ -10,6 +12,18 @@ namespace HealthPanel.Services.Stats.Dtos
         public string Address { get; set; }
         public string Type { get; set; }
         
+
+        public HealthFacilityBranchDto() {}
+
+        public HealthFacilityBranchDto(HealthFacilityBranch entity)
+        {
+            this.Id = entity.Id;
+            this.HealthFacilityId = entity.HealthFacilityId;
+            this.Name = entity.Name;
+            this.Address = entity.Address;
+            this.Type = entity.Type.ToString();
+        }
+
         // public static explicit operator LabDto(Lab entity)
         // {
         //     return new LabDto

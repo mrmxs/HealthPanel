@@ -1,6 +1,6 @@
 namespace HealthPanel.Core.Entities
 {
-    public class Examination
+    public class Examination : IEntity
     {
         public int Id { get; internal set; }
         public int HealthFacilityBranchId { get; set; }  // todo (с типом Hospital/Clinic ?)

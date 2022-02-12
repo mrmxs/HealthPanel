@@ -13,7 +13,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorController : AbstractController<DoctorDto>
+    public class DoctorController
+        : AbstractController<Doctor, DoctorDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -28,7 +29,13 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             var entities = await _context.Doctors.ToListAsync();
 
-            return Ok(entities.Select(t => this.ConvertToDto(t)));
+            var dtos = entities
+                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList();
+
+            return Ok(dtos);
         }
 
         // GET: api/Doctor/5
@@ -42,7 +49,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(doctor));
+            return Ok(await this.EntityToDtoAsync(doctor));
         }
 
         // PUT: api/Doctor/5
@@ -68,7 +75,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DoctorExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -109,22 +116,13 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool DoctorExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.Doctors.Any(e => e.Id == id);
         }
 
-        private object ConvertToDto(object raw)
-        {
-            var entity = raw as Doctor;
-
-            return new DoctorDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                HealthFacilityBranchId = entity.HealthFacilityBranchId,
-            };
-        }
+        protected override async Task<DoctorDto> EntityToDtoAsync(Doctor entity)
+            => new DoctorDto(entity);
 
         private Doctor ConvertToEntity(DoctorDto dto)
         {

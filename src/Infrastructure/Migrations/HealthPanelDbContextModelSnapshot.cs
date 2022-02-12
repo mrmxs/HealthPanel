@@ -132,7 +132,7 @@ namespace HealthPanel.Infrastructure.Migrations
                     b.ToTable("health_facility_branches", (string)null);
                 });
 
-            modelBuilder.Entity("HealthPanel.Core.Entities.LabMedTest", b =>
+            modelBuilder.Entity("HealthPanel.Core.Entities.LabTest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

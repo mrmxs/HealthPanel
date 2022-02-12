@@ -13,7 +13,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExaminationController : AbstractController<ExaminationDto>
+    public class ExaminationController
+        : AbstractController<Examination, ExaminationDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -29,7 +30,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.Examinations.ToListAsync();
             
             var dtos = entities
-                .Select(async p => this.ConvertToDto(await this.GetEntities(p)))
+                .Select(async p => await this.EntityToDtoAsync(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -48,7 +49,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(await this.GetEntities(examination)));
+            return Ok(await this.EntityToDtoAsync(examination));
         }
 
         // PUT: api/Examination/5
@@ -75,7 +76,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ExaminationExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -99,7 +100,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var resultId = await _context.SaveChangesAsync();
 
             var examination = await _context.Examinations.FindAsync(resultId);
-            var result = this.ConvertToDto(await this.GetEntities(examination));
+            var result = await this.EntityToDtoAsync(examination);
 
             return CreatedAtAction(nameof(Post), new { id = resultId }, result);
         }
@@ -120,38 +121,18 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool ExaminationExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.Examinations.Any(e => e.Id == id);
-        }
+        }        
 
-        //todo move to repository
-        private async Task<IEnumerable<object>> GetEntities(Examination entity) 
-        {
-            var branch = await _context.HealthFacilityBranches.FindAsync(entity.HealthFacilityBranchId);
-            var test = await _context.Tests.FindAsync(entity.TestId);
-
-            var entities = new List<object>{ entity, branch, test };
-            
-            return entities;
-        }
-
-        private object ConvertToDto(IEnumerable<object> entities)
-        {
-            var entity = entities.ToArray()[0] as Examination;
-            var branch = entities.ToArray()[1] as HealthFacilityBranch;
-            var test = entities.ToArray()[2] as MedTest;
-
-            return new ExaminationDto
-            {
-                Id = entity.Id,
-                HealthFacilityBranchId = entity.HealthFacilityBranchId,
-                HealthFacilityBranchName = branch.Name,
-                TestId = entity.TestId,
-                TestName = test.Name,
-                CustomTestName = entity.CustomName,
-            };
-        }
+        protected override async Task<ExaminationDto> EntityToDtoAsync(Examination entity)
+            => new ExaminationDto( //todo move to repository
+                examinationEntity:  entity,
+                branchEntity:   await _context.HealthFacilityBranches
+                    .FindAsync(entity.HealthFacilityBranchId),
+                medTestEntity:  await _context.Tests.FindAsync(entity.TestId)
+            );
 
         private Examination ConvertToEntity(ExaminationDto dto)
         {

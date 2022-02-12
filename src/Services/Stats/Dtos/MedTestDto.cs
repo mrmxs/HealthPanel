@@ -1,3 +1,5 @@
+using HealthPanel.Core.Entities;
+
 namespace HealthPanel.Services.Stats.Dtos
 {
     public class MedTestDto : IDto
@@ -6,7 +8,16 @@ namespace HealthPanel.Services.Stats.Dtos
         public string Name { get; set; }
         public string Units { get; set; }
     
-        // public static explicit operator MedicalTestDto(MedicalTest entity)
+        public MedTestDto() {}
+
+        public MedTestDto(MedTest testEntity)
+        {
+            this.Id = testEntity.Id;
+            this.Name = testEntity.Name;
+            this.Units = testEntity.Units;
+        }
+
+    // public static explicit operator MedicalTestDto(MedicalTest entity)
         // {
         //     return new MedicalTestDto
         //     {

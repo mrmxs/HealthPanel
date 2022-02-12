@@ -13,7 +13,8 @@ namespace HealthPanel.Services.Stats.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HealthFacilityController : AbstractController<HealthFacilityDto>
+    public class HealthFacilityController
+        : AbstractController<HealthFacility, HealthFacilityDto>
     {
         private readonly HealthPanelDbContext _context;
 
@@ -28,7 +29,13 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             var entities = await _context.HealthFacilities.ToListAsync();
 
-            return Ok(entities.Select(t => this.ConvertToDto(t)));
+            var dtos = entities
+                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList();
+
+            return Ok(dtos);
         }
 
         // GET: api/HealthFacility/5
@@ -42,7 +49,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(this.ConvertToDto(healthFacility));
+            return Ok(await this.EntityToDtoAsync(healthFacility));
         }
 
         // PUT: api/HealthFacility/5
@@ -68,7 +75,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!HealthFacilityExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -110,23 +117,13 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool HealthFacilityExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.HealthFacilities.Any(e => e.Id == id);
         }
 
-        private object ConvertToDto(object raw)
-        {
-            var entity = raw as HealthFacility;
-
-            return new HealthFacilityDto
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Address = entity.Address,
-
-            };
-        }
+        protected override async Task<HealthFacilityDto> EntityToDtoAsync(HealthFacility entity)
+            => new HealthFacilityDto(entity);
 
         private HealthFacility ConvertToEntity(HealthFacilityDto dto)
         {

@@ -1,6 +1,6 @@
 namespace HealthPanel.Core.Entities
 {
-    public class LabMedTest
+    public class LabTest : IEntity
     {
         public int Id { get; internal set; }
         public int HealthFacilityBranchId { get; set; }
