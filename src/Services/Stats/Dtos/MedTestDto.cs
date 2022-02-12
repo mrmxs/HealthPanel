@@ -8,6 +8,8 @@ namespace HealthPanel.Services.Stats.Dtos
         public string Name { get; set; }
         public string Units { get; set; }
     
+        public MedTestDto() {}
+
         public MedTestDto(MedTest testEntity)
         {
             this.Id = testEntity.Id;

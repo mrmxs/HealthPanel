@@ -7,6 +7,8 @@ namespace HealthPanel.Services.Stats.Dtos
         public int Id { get; set; }
         public string Name { get; set; } 
 
+        public UserDto() {}
+
         public UserDto(User userEntity)
         {
             this.Id = userEntity.Id;
