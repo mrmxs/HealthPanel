@@ -10,7 +10,7 @@ namespace HealthPanel.Infrastructure.Data
         }
 
         public DbSet<MedTest> Tests { get; set; }
-        public DbSet<LabMedTest> LabTests { get; set; }
+        public DbSet<LabTest> LabTests { get; set; }
         public DbSet<Examination> Examinations { get; set; }
 
         public DbSet<HealthFacility> HealthFacilities { get; set; }
