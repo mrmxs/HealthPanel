@@ -38,6 +38,8 @@ namespace HealthPanel.Services.Stats.Controllers //Stats.Controllers
         public abstract Task<IActionResult> Delete(int id);
 
 
+        protected abstract bool Exists(int id);
+
         protected abstract Task<D> EntityToDtoAsync(T entity);
 
         protected BadRequestObjectResult CustomBadRequest(object error)
