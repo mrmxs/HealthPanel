@@ -75,7 +75,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!HealthFacilityExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -117,7 +117,7 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool HealthFacilityExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.HealthFacilities.Any(e => e.Id == id);
         }

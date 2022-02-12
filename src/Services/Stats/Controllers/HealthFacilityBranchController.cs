@@ -78,7 +78,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!HealthFacilityBranchExists(id))
+                if (!Exists(id))
                 {
                     return NotFound();
                 }
@@ -119,7 +119,7 @@ namespace HealthPanel.Services.Stats.Controllers
             return NoContent();
         }
 
-        private bool HealthFacilityBranchExists(int id)
+        protected override bool Exists(int id)
         {
             return _context.HealthFacilityBranches.Any(e => e.Id == id);
         }
