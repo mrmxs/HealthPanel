@@ -3,7 +3,7 @@ using HealthPanel.Core.Entities;
 
 namespace HealthPanel.Services.Stats.Dtos
 {
-    public class LabMedTestDto : IDto
+    public class LabTestDto : IDto
     {
         public int Id { get; internal set; }
         public int HealthFacilityBranchId { get; set; }
@@ -15,10 +15,10 @@ namespace HealthPanel.Services.Stats.Dtos
         public double Min { get; set; }
         public double Max { get; set; }
         
-        public LabMedTestDto () {}            
+        public LabTestDto () {}            
         
-        public LabMedTestDto (            
-            LabMedTest labTestEntity,
+        public LabTestDto (            
+            LabTest labTestEntity,
             HealthFacilityBranch branchEntity,
             MedTest medTestEntity)
         {
