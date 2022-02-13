@@ -3,6 +3,7 @@ using System;
 using HealthPanel.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HealthPanel.Infrastructure.Migrations
 {
     [DbContext(typeof(HealthPanelDbContext))]
-    partial class HealthPanelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220209212501_EntityUserExaminationCreated")]
+    partial class EntityUserExaminationCreated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,11 +56,6 @@ namespace HealthPanel.Infrastructure.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CustomName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("custom_name");
 
                     b.Property<int>("HealthFacilityBranchId")
                         .HasColumnType("integer")
@@ -132,7 +129,7 @@ namespace HealthPanel.Infrastructure.Migrations
                     b.ToTable("health_facility_branches", (string)null);
                 });
 
-            modelBuilder.Entity("HealthPanel.Core.Entities.LabTest", b =>
+            modelBuilder.Entity("HealthPanel.Core.Entities.LabMedTest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,11 +137,6 @@ namespace HealthPanel.Infrastructure.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CustomName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("custom_name");
 
                     b.Property<int>("HealthFacilityBranchId")
                         .HasColumnType("integer")
@@ -266,9 +258,9 @@ namespace HealthPanel.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date");
 
-                    b.Property<int>("LabTestId")
+                    b.Property<int>("LabMedTestId")
                         .HasColumnType("integer")
-                        .HasColumnName("lab_test_id");
+                        .HasColumnName("lab_med_test_id");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
