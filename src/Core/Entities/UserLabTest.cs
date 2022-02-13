@@ -3,7 +3,7 @@ using HealthPanel.Core.Enums;
 
 namespace HealthPanel.Core.Entities
 {
-    public class UserLabTest
+    public class UserLabTest : IEntity
     {
         public int Id { get; internal set; }        
         [Required]
