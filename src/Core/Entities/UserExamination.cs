@@ -3,7 +3,7 @@ using HealthPanel.Core.Enums;
 
 namespace HealthPanel.Core.Entities
 {
-    public class UserExamination
+    public class UserExamination : IEntity
     {
         public int Id { get; internal set; }        
         [Required]
@@ -13,7 +13,6 @@ namespace HealthPanel.Core.Entities
         public int DoctorId { get; set; }
         public DateTime Date { get; set; }
         public string Value { get; set; }
-        public TestStatus Status { get; set; }
-        
+        public TestStatus Status { get; set; }        
     }
 }
