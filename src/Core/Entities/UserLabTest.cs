@@ -7,7 +7,7 @@ namespace HealthPanel.Core.Entities
     {
         public int Id { get; internal set; }        
         [Required]
-        public int LabMedTestId { get; set; } 
+        public int LabTestId { get; set; } 
         [Required] 
         public int UserId { get; set; }
         public DateTime Date { get; set; }

@@ -26,12 +26,12 @@ namespace HealthPanel.Services.Stats.Dtos
             User userEntity)
         {            
             this.Id = userTestEntity.Id;
-            this.LabTestId = userTestEntity.LabMedTestId; // todo !!!!
+            this.LabTestId = userTestEntity.LabTestId;
             this.UserId = userTestEntity.UserId;
             this.Date = userTestEntity.Date;
-            // TimeZoneInfo.ConvertTime(
-            //     userTestEntity.Date, 
-            //     TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time"));
+                // TimeZoneInfo.ConvertTime(
+                //     userTestEntity.Date, 
+                //     TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time"));
             this.Value = userTestEntity.Value;
             this.Status = userTestEntity.Status.ToString();
         

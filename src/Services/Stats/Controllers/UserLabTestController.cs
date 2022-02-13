@@ -65,7 +65,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             var userLabTest = await _context.UserLabTests.FindAsync(id);
 
-            userLabTest.LabMedTestId = dto.LabTestId; //todo !!!!
+            userLabTest.LabTestId = dto.LabTestId;
             userLabTest.UserId = dto.UserId;
             userLabTest.Date = dto.Date;
             userLabTest.Value = dto.Value;
@@ -128,30 +128,10 @@ namespace HealthPanel.Services.Stats.Controllers
             return _context.UserLabTests.Any(e => e.Id == id);
         }
 
-        // //todo move to repository
-        // private async Task<IEnumerable<object>> GetEntities(UserLabTest entity) 
-        // {
-        //     var labTest = await _context.LabTests.FindAsync(entity.LabTestId); 
-            
-        //     var branch = await _context.HealthFacilityBranches
-        //         .FindAsync(labTest.HealthFacilityBranchId);
-        //     var test = await _context.Tests.FindAsync(labTest.TestId);
-            
-        //     var user = await _context.Users.FindAsync(entity.UserId);
-            
-        //     return new List<object>{ entity, labTest, branch, test, user };
-        // }
-
         protected override async Task<UserLabTestDto> EntityToDtoAsync(UserLabTest entity)  
         {
-             var labTest = await _context.LabTests.FindAsync(entity.LabMedTestId); //todo !!!!
-            
-            // var branch = await _context.HealthFacilityBranches
-            //     .FindAsync(labTest.HealthFacilityBranchId);
-            // var test = await _context.Tests.FindAsync(labTest.TestId);
-            
-            // var user = await _context.Users.FindAsync(entity.UserId);
-           
+             var labTest = await _context.LabTests.FindAsync(entity.LabTestId);
+                       
            //todo move to repository 
            return new UserLabTestDto(
                 userTestEntity: entity, 
@@ -163,16 +143,11 @@ namespace HealthPanel.Services.Stats.Controllers
             );
         }
 
-        // private UserLabTestDto ConvertToDto(IEnumerable<object> entities)
-        // {
-        //     return new UserLabTestDto(entities);
-        // }
-
         private UserLabTest ConvertToEntity(UserLabTestDto dto)
         {
             return new UserLabTest
             {
-                LabMedTestId = dto.LabTestId, //todo !!!!!
+                LabTestId = dto.LabTestId,
                 UserId = dto.UserId,
                 Date = dto.Date,
                 Value = dto.Value,
