@@ -7,9 +7,8 @@ namespace HealthPanel.Core.Entities
     {
         public int Id { get; internal set; }
         public int HealthFacilityBranchId { get; set; }
-        public string? CustomName { get; set; }
-        public int?[]? LabTestIds { get; set; }
+        public int TestPanelId { get; set; }
+        public string CustomName { get; set; }
+        public int[] LabTestIds { get; set; }
     }
-
-
 }
