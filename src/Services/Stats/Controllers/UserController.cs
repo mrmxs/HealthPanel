@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
@@ -42,14 +41,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<UserDto>> Get(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var entity = await _context.Users.FindAsync(id);
 
-            if (user == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(user));
+            return Ok(await this.EntityToDtoAsync(entity));
         }
 
         // PUT: api/User/5
@@ -62,10 +61,10 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var modified = await _context.Users.FindAsync(id);
 
-            user.Name = dto.Name; //todo bad practice
-            _context.Entry(user).State = EntityState.Modified;
+            modified.Name = dto.Name; //todo bad practice
+            _context.Entry(modified).State = EntityState.Modified;
 
             try
             {
@@ -91,44 +90,43 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<UserDto>> Post(UserDto dto)
         {
-            var user = ConvertToEntity(dto);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            _context.Users.Add(ConvertToEntity(dto));
 
-            return CreatedAtAction(nameof(Post), new { id = user.Id }, user);
+            var newEntityId = await _context.SaveChangesAsync();
+            var newEntity = await _context.Users.FindAsync(newEntityId);
+
+            return CreatedAtAction(nameof(Post),
+                new { id = newEntity.Id },
+                await this.EntityToDtoAsync(newEntity));
         }
 
         // DELETE: api/User/5
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var entity = await _context.Users.FindAsync(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
+            _context.Users.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
+            => _context.Users.Any(e => e.Id == id);
 
         protected override async Task<UserDto> EntityToDtoAsync(User entity)
             => new UserDto(entity);
 
         private User ConvertToEntity(UserDto dto)
+        => new()
         {
-            return new User
-            {
-                // Id = dto.Id,
-                Name = dto.Name,
-            };
-        }
+            // Id = dto.Id,
+            Name = dto.Name,
+        };
     }
 }

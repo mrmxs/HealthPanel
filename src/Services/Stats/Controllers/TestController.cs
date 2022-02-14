@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
@@ -42,14 +41,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<MedTestDto>> Get(int id)
         {
-            var medicalTest = await _context.Tests.FindAsync(id);
+            var entity = await _context.Tests.FindAsync(id);
 
-            if (medicalTest == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(medicalTest));
+            return Ok(await this.EntityToDtoAsync(entity));
         }
 
         // PUT: api/Test/5
@@ -62,11 +61,11 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-            var medicalTest = await _context.Tests.FindAsync(id);
+            var modified = await _context.Tests.FindAsync(id);
                        
-            medicalTest.Name = dto.Name; //todo bad practice
-            medicalTest.Units = dto.Units;
-            _context.Entry(medicalTest).State = EntityState.Modified;
+            modified.Name = dto.Name; //todo bad practice
+            modified.Units = dto.Units;
+            _context.Entry(modified).State = EntityState.Modified;
 
             try
             {
@@ -92,11 +91,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<MedTestDto>> Post(MedTestDto dto)
         {
-            var medicalTest = ConvertToEntity(dto);
-            _context.Tests.Add(medicalTest);
-            await _context.SaveChangesAsync();
+            _context.Tests.Add(ConvertToEntity(dto));
 
-            return CreatedAtAction(nameof(Post), new { id = medicalTest.Id }, medicalTest);
+            var newEntityId = await _context.SaveChangesAsync();
+            var newEntity = await _context.Tests.FindAsync(newEntityId);
+
+            return CreatedAtAction(nameof(Post),
+                new { id = newEntity.Id },
+                await this.EntityToDtoAsync(newEntity));
             // The C# nameof keyword is used to avoid hard-coding 
             // the action name in the CreatedAtAction call.
         }
@@ -105,34 +107,30 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var medicalTest = await _context.Tests.FindAsync(id);
-            if (medicalTest == null)
+            var entity = await _context.Tests.FindAsync(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.Tests.Remove(medicalTest);
+            _context.Tests.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-        {
-            return _context.Tests.Any(e => e.Id == id);
-        }
+            => _context.Tests.Any(e => e.Id == id);
 
         protected override async Task<MedTestDto> EntityToDtoAsync(MedTest entity)
             => new MedTestDto(entity);
-        
+
         private MedTest ConvertToEntity(MedTestDto dto)
-        {
-            return new MedTest
+            => new()
             {
                 // Id = lab.Id,
                 Name = dto.Name,
                 Units = dto.Units,
             };
-        }
     }
 }

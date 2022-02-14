@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
@@ -42,14 +41,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<HealthFacilityDto>> Get(int id)
         {
-            var healthFacility = await _context.HealthFacilities.FindAsync(id);
+            var entity = await _context.HealthFacilities.FindAsync(id);
 
-            if (healthFacility == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(healthFacility));
+            return Ok(await this.EntityToDtoAsync(entity));
         }
 
         // PUT: api/HealthFacility/5
@@ -62,12 +61,12 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-            var healthFacility = await _context.HealthFacilities.FindAsync(id);
+            var modified = await _context.HealthFacilities.FindAsync(id);
 
-            healthFacility.Name = dto.Name; //todo bad practice
-            healthFacility.Address = dto.Address; 
+            modified.Name = dto.Name; //todo bad practice
+            modified.Address = dto.Address; 
 
-            _context.Entry(healthFacility).State = EntityState.Modified;
+            _context.Entry(modified).State = EntityState.Modified;
 
             try
             {
@@ -91,48 +90,48 @@ namespace HealthPanel.Services.Stats.Controllers
         // POST: api/HealthFacility
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public override async Task<ActionResult<HealthFacilityDto>> Post(HealthFacilityDto dto)
+        public override async Task<ActionResult<HealthFacilityDto>> Post(
+            HealthFacilityDto dto)
         {
-            var healthFacility = ConvertToEntity(dto);
-            _context.HealthFacilities.Add(healthFacility);
-            await _context.SaveChangesAsync();
+            _context.HealthFacilities.Add(this.ConvertToEntity(dto));
+
+            var newEntityId = await _context.SaveChangesAsync();
+            var newEntity =
+                await _context.HealthFacilities.FindAsync(newEntityId);
 
             return CreatedAtAction(nameof(Post),
-                new { id = healthFacility.Id }, healthFacility);
+                new { id = newEntity.Id },
+                await this.EntityToDtoAsync(newEntity));
         }
 
         // DELETE: api/HealthFacility/5
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var healthFacility = await _context.HealthFacilities.FindAsync(id);
-            if (healthFacility == null)
+            var entity = await _context.HealthFacilities.FindAsync(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.HealthFacilities.Remove(healthFacility);
+            _context.HealthFacilities.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-        {
-            return _context.HealthFacilities.Any(e => e.Id == id);
-        }
+            => _context.HealthFacilities.Any(e => e.Id == id);
 
         protected override async Task<HealthFacilityDto> EntityToDtoAsync(HealthFacility entity)
             => new HealthFacilityDto(entity);
 
         private HealthFacility ConvertToEntity(HealthFacilityDto dto)
-        {
-            return new HealthFacility
+            => new()
             {
                 // Id = dto.Id,
                 Name = dto.Name,
                 Address = dto.Address,
             };
-        }
     }
 }

@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Core.Enums;
 using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
@@ -43,14 +42,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<UserLabTestDto>> Get(int id)
         {
-            var userLabTest = await _context.UserLabTests.FindAsync(id);
+            var entity = await _context.UserLabTests.FindAsync(id);
 
-            if (userLabTest == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-             return Ok(await this.EntityToDtoAsync(userLabTest));
+            return Ok(await this.EntityToDtoAsync(entity));
         }
 
         // PUT: api/UserLabTest/5
@@ -63,16 +62,16 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-            var userLabTest = await _context.UserLabTests.FindAsync(id);
+            var modified = await _context.UserLabTests.FindAsync(id);
 
-            userLabTest.LabTestId = dto.LabTestId;
-            userLabTest.UserId = dto.UserId;
-            userLabTest.Date = dto.Date;
-            userLabTest.Value = dto.Value;
-            userLabTest.Status = (TestStatus)
+            modified.LabTestId = dto.LabTestId;
+            modified.UserId = dto.UserId;
+            modified.Date = dto.Date;
+            modified.Value = dto.Value;
+            modified.Status = (TestStatus)
                     Enum.Parse(typeof(TestStatus), dto.Status);
 
-            _context.Entry(userLabTest).State = EntityState.Modified;
+            _context.Entry(modified).State = EntityState.Modified;
 
             try
             {
@@ -96,44 +95,45 @@ namespace HealthPanel.Services.Stats.Controllers
         // POST: api/UserLabTest
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public override async Task<ActionResult<UserLabTestDto>> Post(UserLabTestDto dto)
+        public override async Task<ActionResult<UserLabTestDto>> Post(
+            UserLabTestDto dto)
         {
             _context.UserLabTests.Add(this.ConvertToEntity(dto));
-            var resultId = await _context.SaveChangesAsync();
+            
+            var newEntityId = await _context.SaveChangesAsync();
+            var newEntity = await _context.UserLabTests.FindAsync(newEntityId);
 
-            var userLabTest = await _context.UserLabTests.FindAsync(resultId);
-            var result = await this.EntityToDtoAsync(userLabTest);
-
-            return CreatedAtAction(nameof(Post), new { id = resultId }, result);
+            return CreatedAtAction(nameof(Post),
+                new { id = newEntity.Id },
+                await this.EntityToDtoAsync(newEntity));
         }
 
         // DELETE: api/UserLabTest/5
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var userLabTest = await _context.UserLabTests.FindAsync(id);
-            if (userLabTest == null)
+            var entity = await _context.UserLabTests.FindAsync(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.UserLabTests.Remove(userLabTest);
+            _context.UserLabTests.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-        {
-            return _context.UserLabTests.Any(e => e.Id == id);
-        }
+            => _context.UserLabTests.Any(e => e.Id == id);
 
         protected override async Task<UserLabTestDto> EntityToDtoAsync(UserLabTest entity)  
         {
-             var labTest = await _context.LabTests.FindAsync(entity.LabTestId);
-                       
-           //todo move to repository 
-           return new UserLabTestDto(
+            var labTest =
+                await _context.LabTests.FindAsync(entity.LabTestId);
+
+            //todo move to repository 
+            return new UserLabTestDto(
                 userTestEntity: entity, 
                 labTestEntity:  labTest,
                 branchEntity:   await _context.HealthFacilityBranches
