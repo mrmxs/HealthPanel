@@ -3,7 +3,10 @@ using HealthPanel.Core.Enums;
 
 namespace HealthPanel.Core.Entities
 {
-    // [Index(nameof(Name), IsUnique = true)] //todo
+    /// <summary>
+    /// Филиал медицинского учреждения в конкретной сфере услуг
+    /// Может принадлежать типам: Больница, Поликлиника, Лаборатория и другим
+    /// </summary>
     public class HealthFacilityBranch : IEntity
     {
         public int Id { get; internal set; }
