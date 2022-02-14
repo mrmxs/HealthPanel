@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
@@ -42,14 +41,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<LabTestDto>> Get(int id)
         {
-            var labTest = await _context.LabTests.FindAsync(id);
+            var entity = await _context.LabTests.FindAsync(id);
 
-            if (labTest == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(labTest));
+            return Ok(await this.EntityToDtoAsync(entity));
         }
 
         // PUT: api/LabTest/5
@@ -62,15 +61,15 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-            var labTest = await _context.LabTests.FindAsync(id);
+            var modified = await _context.LabTests.FindAsync(id);
                        
-            labTest.HealthFacilityBranchId = dto.HealthFacilityBranchId;
-            labTest.TestId = dto.TestId;
-            labTest.CustomName = dto.CustomTestName;
-            labTest.Min = dto.Min;
-            labTest.Max = dto.Max;
+            modified.HealthFacilityBranchId = dto.HealthFacilityBranchId;
+            modified.TestId = dto.TestId;
+            modified.CustomName = dto.CustomTestName;
+            modified.Min = dto.Min;
+            modified.Max = dto.Max;
 
-            _context.Entry(labTest).State = EntityState.Modified;
+            _context.Entry(modified).State = EntityState.Modified;
 
             try
             {
@@ -99,34 +98,33 @@ namespace HealthPanel.Services.Stats.Controllers
             //todo: equal ExaminationController: healthFacilityBranchId & testId validation -> repos
 
             _context.LabTests.Add(this.ConvertToEntity(dto));
-            var resultId = await _context.SaveChangesAsync();
 
-            var labTest = await _context.LabTests.FindAsync(resultId);
-            var result = await this.EntityToDtoAsync(labTest);
+            var newEntityId = await _context.SaveChangesAsync();
+            var newEntity = await _context.LabTests.FindAsync(newEntityId);
 
-            return CreatedAtAction(nameof(Post), new { id = resultId }, result);
+            return CreatedAtAction(nameof(Post),
+               new { id = newEntity.Id },
+               await this.EntityToDtoAsync(newEntity));
         }
 
         // DELETE: api/LabTest/5
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var labTest = await _context.LabTests.FindAsync(id);
-            if (labTest == null)
+            var entity = await _context.LabTests.FindAsync(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.LabTests.Remove(labTest);
+            _context.LabTests.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-        {
-            return _context.LabTests.Any(e => e.Id == id);
-        }
+            => _context.LabTests.Any(e => e.Id == id);
 
         protected override async Task<LabTestDto> EntityToDtoAsync(LabTest entity)
             => new LabTestDto( //todo move to repository
@@ -137,8 +135,7 @@ namespace HealthPanel.Services.Stats.Controllers
             );
 
         private LabTest ConvertToEntity(LabTestDto dto)
-        {
-            return new LabTest
+            => new()
             {
                 HealthFacilityBranchId = dto.HealthFacilityBranchId,
                 TestId = dto.TestId,
@@ -146,6 +143,5 @@ namespace HealthPanel.Services.Stats.Controllers
                 Min = dto.Min,
                 Max = dto.Max,
             };
-        }
     }
 }

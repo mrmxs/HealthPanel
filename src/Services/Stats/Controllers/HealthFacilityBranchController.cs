@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Core.Enums;
 using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
@@ -43,14 +42,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<HealthFacilityBranchDto>> Get(int id)
         {
-            var branch = await _context.HealthFacilityBranches.FindAsync(id);
+            var entity = await _context.HealthFacilityBranches.FindAsync(id);
 
-            if (branch == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(branch));
+            return Ok(await this.EntityToDtoAsync(entity));
         }
 
         // PUT: api/HealthFacilityBranch/5
@@ -63,14 +62,14 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-            var branch = await _context.HealthFacilityBranches.FindAsync(id);
+            var modified = await _context.HealthFacilityBranches.FindAsync(id);
                        
-            branch.HealthFacilityId = dto.HealthFacilityId;
-            branch.Name = dto.Name;
-            branch.Address = dto.Address;
-            branch.Type = (HealthFacilityBranchType)
+            modified.HealthFacilityId = dto.HealthFacilityId;
+            modified.Name = dto.Name;
+            modified.Address = dto.Address;
+            modified.Type = (HealthFacilityBranchType)
                 Enum.Parse(typeof(HealthFacilityBranchType), dto.Type);
-            _context.Entry(branch).State = EntityState.Modified;
+            _context.Entry(modified).State = EntityState.Modified;
 
             try
             {
@@ -94,50 +93,51 @@ namespace HealthPanel.Services.Stats.Controllers
         // POST: api/HealthFacilityBranch
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public override async Task<ActionResult<HealthFacilityBranchDto>> Post(HealthFacilityBranchDto dto)
+        public override async Task<ActionResult<HealthFacilityBranchDto>> Post(
+            HealthFacilityBranchDto dto)
         {
-            var branch = ConvertToEntity(dto);
-            _context.HealthFacilityBranches.Add(branch);
-            await _context.SaveChangesAsync();
+            _context.HealthFacilityBranches.Add(this.ConvertToEntity(dto));
 
-            return CreatedAtAction(nameof(Post), new { id = branch.Id }, branch);
+            var newEntityId = await _context.SaveChangesAsync();
+            var newEntity = await _context.HealthFacilityBranches.FindAsync(newEntityId);
+
+            return CreatedAtAction(nameof(Post),
+                new { id = newEntity.Id },
+                await this.EntityToDtoAsync(newEntity));
         }
 
         // DELETE: api/HealthFacilityBranch/5
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var branch = await _context.HealthFacilityBranches.FindAsync(id);
-            if (branch == null)
+            var entity = await _context.HealthFacilityBranches.FindAsync(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.HealthFacilityBranches.Remove(branch);
+            _context.HealthFacilityBranches.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-        {
-            return _context.HealthFacilityBranches.Any(e => e.Id == id);
-        }
+            => _context.HealthFacilityBranches.Any(e => e.Id == id);
 
-        protected override async Task<HealthFacilityBranchDto>
-            EntityToDtoAsync(HealthFacilityBranch entity)
-                => new HealthFacilityBranchDto(entity);
+        protected override async Task<HealthFacilityBranchDto> EntityToDtoAsync(
+            HealthFacilityBranch entity)
+            => new HealthFacilityBranchDto(entity);
 
-        private HealthFacilityBranch ConvertToEntity(HealthFacilityBranchDto branch) {
-            return new HealthFacilityBranch
+        private HealthFacilityBranch ConvertToEntity(HealthFacilityBranchDto branch)
+            => new()
             {
                 // Id = branch.Id,
                 HealthFacilityId = branch.HealthFacilityId,
                 Name = branch.Name,
                 Address = branch.Address,
                 Type = (HealthFacilityBranchType)
-                    Enum.Parse(typeof(HealthFacilityBranchType), branch.Type),
+                        Enum.Parse(typeof(HealthFacilityBranchType), branch.Type),
             };
-        }
     }
 }

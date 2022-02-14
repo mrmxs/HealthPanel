@@ -103,10 +103,10 @@ namespace HealthPanel.Services.Stats.Controllers
 
             var newEntityId = await _context.SaveChangesAsync();
             var newEntity = await _context.UserExaminations.FindAsync(newEntityId);
-            var newEntityDto = await this.EntityToDtoAsync(newEntity);
 
             return CreatedAtAction(nameof(Post),
-                new { id = newEntityDto.Id }, newEntityDto);
+                new { id = newEntity.Id },
+                await this.EntityToDtoAsync(newEntity));
         }
 
         // DELETE: api/UserExamination/5
@@ -128,9 +128,11 @@ namespace HealthPanel.Services.Stats.Controllers
         protected override bool Exists(int id) 
             => _context.UserExaminations.Any(e => e.Id == id);
 
-        protected override async Task<UserExaminationDto> EntityToDtoAsync(UserExamination entity)
+        protected override async Task<UserExaminationDto> EntityToDtoAsync(
+            UserExamination entity)
         {
-            var examination = await _context.Examinations.FindAsync(entity.ExaminationId);
+            var examination = 
+                await _context.Examinations.FindAsync(entity.ExaminationId);
 
             //todo move to repository 
             return new UserExaminationDto(
@@ -145,8 +147,7 @@ namespace HealthPanel.Services.Stats.Controllers
         }
 
         private UserExamination ConvertToEntity(UserExaminationDto dto)
-        {
-            return new UserExamination
+            => new()
             {
                 ExaminationId = dto.ExaminationId,
                 UserId = dto.UserId,
@@ -154,9 +155,8 @@ namespace HealthPanel.Services.Stats.Controllers
                 Date = dto.Date,
                 Value = dto.Value,
                 Status = (TestStatus)
-                    Enum.Parse(typeof(TestStatus), dto.Status),
+                        Enum.Parse(typeof(TestStatus), dto.Status),
             };
-        }
 
     }
 }

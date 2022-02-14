@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthPanel.Services.Stats.Controllers
 {
@@ -42,14 +41,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<DoctorDto>> Get(int id)
         {
-            var doctor = await _context.Doctors.FindAsync(id);
+            var entity = await _context.Doctors.FindAsync(id);
 
-            if (doctor == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(doctor));
+            return Ok(await this.EntityToDtoAsync(entity));
         }
 
         // PUT: api/Doctor/5
@@ -63,11 +62,11 @@ namespace HealthPanel.Services.Stats.Controllers
             }
 
 
-            var doctor = await _context.Doctors.FindAsync(id);
+            var modified = await _context.Doctors.FindAsync(id);
 
-            doctor.Name = dto.Name; //todo bad practice
-            doctor.HealthFacilityBranchId = dto.HealthFacilityBranchId; //todo bad practice
-            _context.Entry(doctor).State = EntityState.Modified;
+            modified.Name = dto.Name; //todo bad practice
+            modified.HealthFacilityBranchId = dto.HealthFacilityBranchId;
+            _context.Entry(modified).State = EntityState.Modified;
 
             try
             {
@@ -93,45 +92,44 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<DoctorDto>> Post(DoctorDto dto)
         {
-            var doctor = ConvertToEntity(dto);
-            _context.Doctors.Add(doctor);
-            await _context.SaveChangesAsync();
+            _context.Doctors.Add(this.ConvertToEntity(dto));
 
-            return CreatedAtAction(nameof(Post), new { id = doctor.Id }, doctor);
+            var newEntityId = await _context.SaveChangesAsync();
+            var newEntity = await _context.Doctors.FindAsync(newEntityId);
+
+            return CreatedAtAction(nameof(Post),
+                 new { id = newEntity.Id },
+                 await this.EntityToDtoAsync(newEntity));
         }
 
         // DELETE: api/Doctor/5
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var doctor = await _context.Doctors.FindAsync(id);
-            if (doctor == null)
+            var entity = await _context.Doctors.FindAsync(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.Doctors.Remove(doctor);
+            _context.Doctors.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-        {
-            return _context.Doctors.Any(e => e.Id == id);
-        }
+            => _context.Doctors.Any(e => e.Id == id);
 
         protected override async Task<DoctorDto> EntityToDtoAsync(Doctor entity)
             => new DoctorDto(entity);
 
         private Doctor ConvertToEntity(DoctorDto dto)
-        {
-            return new Doctor
+            => new()
             {
                 // Id = dto.Id,
                 Name = dto.Name,
                 HealthFacilityBranchId = dto.HealthFacilityBranchId,
             };
-        }
     }
 }
