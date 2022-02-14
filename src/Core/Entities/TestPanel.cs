@@ -6,6 +6,6 @@ namespace HealthPanel.Core.Entities
     public class TestPanel : IEntity
     {
         public int Id { get; internal set; }
-        public string? Name { get; set; }
+        public string Name { get; set; }
     }
 }
