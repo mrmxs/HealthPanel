@@ -1,6 +1,8 @@
 namespace HealthPanel.Core.Entities
 {
-    // [Index(nameof(Name), IsUnique = true)] //todo
+    /// <summary>
+    /// Пациент. Пользователь приложения
+    /// </summary>
     public class User : IEntity
     {
         public int Id { get; internal set; }

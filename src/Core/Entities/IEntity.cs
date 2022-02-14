@@ -1,4 +1,4 @@
-namespace  HealthPanel.Core.Entities
+namespace HealthPanel.Core.Entities
 {
     public interface IEntity
     {

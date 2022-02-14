@@ -1,5 +1,10 @@
 namespace HealthPanel.Core.Entities
 {
+    /// <summary>
+    /// Лабораторный численный анализ, проводимый организацией.
+    /// Содержит референсные значения и название,
+    /// которое может отличаться от общепринятого
+    /// </summary>
     public class LabTest : IEntity
     {
         public int Id { get; internal set; }

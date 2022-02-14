@@ -3,6 +3,11 @@ using HealthPanel.Core.Enums;
 
 namespace HealthPanel.Core.Entities
 {
+    /// <summary>
+    /// Лабораторное исследование, проведенное (или запланированное) пользователем
+    /// в медицинском учреждении, в кокретную дату-время
+    /// Содержит результат исследования
+    /// </summary>
     public class UserLabTest : IEntity
     {
         public int Id { get; internal set; }        

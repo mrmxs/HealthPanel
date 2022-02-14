@@ -3,6 +3,11 @@ using HealthPanel.Core.Enums;
 
 namespace HealthPanel.Core.Entities
 {
+    /// <summary>
+    /// Инструментальное исследование, проведенное (или запланированное) пользователем
+    /// в медицинском учреждении, в кокретную дату-время, с указанием врача
+    /// Содержит результат исследования
+    /// </summary>
     public class UserExamination : IEntity
     {
         public int Id { get; internal set; }        

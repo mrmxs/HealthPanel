@@ -1,6 +1,9 @@
 namespace HealthPanel.Core.Entities
 {
-    // [Index(nameof(Name), IsUnique = true)] //todo
+    /// <summary>
+    /// Базовая сущность для любых медицинских тестов/исследовний
+    /// Хранит общепринятое названием и единицы измерения
+    /// </summary>
     public class MedTest : IEntity
     {
         public int Id { get; internal set; }

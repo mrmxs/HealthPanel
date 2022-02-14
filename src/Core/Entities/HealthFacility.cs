@@ -1,6 +1,10 @@
 namespace HealthPanel.Core.Entities
 {
-    // [Index(nameof(Name), IsUnique = true)] //todo
+    /// <summary>
+    /// Медицинское учреждение
+    /// Юр. лицо с головным офисом и зарегистрированны назвнием.
+    /// Может иметь несколько филиалов в разных сферах услуг и по разным адресам
+    /// </summary>    
     public class HealthFacility : IEntity
     {
         public int Id { get; internal set; }
