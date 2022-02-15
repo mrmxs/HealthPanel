@@ -3,6 +3,7 @@ using System;
 using HealthPanel.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HealthPanel.Infrastructure.Migrations
 {
     [DbContext(typeof(HealthPanelDbContext))]
-    partial class HealthPanelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220214123145_EntitiesTestPanelAndLabTestPanelCreated")]
+    partial class EntitiesTestPanelAndLabTestPanelCreated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,7 +180,6 @@ namespace HealthPanel.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CustomName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("custom_name");
 
@@ -186,14 +187,9 @@ namespace HealthPanel.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("health_facility_branch_id");
 
-                    b.Property<int[]>("LabTestIds")
-                        .IsRequired()
+                    b.Property<int?[]>("LabTestIds")
                         .HasColumnType("integer[]")
                         .HasColumnName("lab_test_ids");
-
-                    b.Property<int>("TestPanelId")
-                        .HasColumnType("integer")
-                        .HasColumnName("test_panel_id");
 
                     b.HasKey("Id")
                         .HasName("pk_lab_test_panels");
@@ -236,7 +232,6 @@ namespace HealthPanel.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
 
