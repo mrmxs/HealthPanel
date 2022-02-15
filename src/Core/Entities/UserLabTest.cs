@@ -16,7 +16,7 @@ namespace HealthPanel.Core.Entities
         [Required] 
         public int UserId { get; set; }
         public DateTime Date { get; set; }
-        public int Value { get; set; }
+        public double Value { get; set; }
         public TestStatus Status { get; set; }
     }
 }
