@@ -14,12 +14,16 @@ namespace HealthPanel.Services.Stats.Dtos
         public string CustomTestPanelName { get; set; }
         public int[] LabTestIds { get; set; }
 
+        public LabTestDto[] Tests { get; set; }
+
         public LabTestPanelDto() { }
 
         public LabTestPanelDto(
             LabTestPanel labTestPanelEntity,
             HealthFacilityBranch branchEntity,
-            TestPanel testPanelEntity)
+            TestPanel testPanelEntity,
+            IEnumerable<LabTest> labTestEntities,
+            IEnumerable<MedTest> medTestEntities)
         {
             this.Id = labTestPanelEntity.Id;
             this.HealthFacilityBranchId = labTestPanelEntity.HealthFacilityBranchId;
@@ -27,6 +31,18 @@ namespace HealthPanel.Services.Stats.Dtos
             this.TestPanelName = testPanelEntity.Name;
             this.CustomTestPanelName = labTestPanelEntity.CustomName;
             this.LabTestIds = labTestPanelEntity.LabTestIds;
+
+            this.Tests = labTestPanelEntity.LabTestIds
+                .Select(p =>
+                {
+                    var labTestEntity = labTestEntities
+                        .First(t => t.Id == p);
+                    var medTestEntity = medTestEntities
+                        .First(t => t.Id == labTestEntity.TestId);
+
+                    return new LabTestDto(
+                        labTestEntity, branchEntity, medTestEntity);
+                }).ToArray();
         }
     }
 }

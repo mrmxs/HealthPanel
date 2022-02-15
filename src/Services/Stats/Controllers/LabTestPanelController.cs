@@ -152,11 +152,26 @@ namespace HealthPanel.Services.Stats.Controllers
             TestPanel testPanelEntity =
                 await _context.TestPanels
                     .FindAsync(entity.TestPanelId);
-                    
+
+            List<LabTest> labTestEntities = entity.LabTestIds.ToList()
+                .Select(async p => await _context.LabTests.FindAsync(p))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList<LabTest>();
+
+            List<MedTest> medTestEntities = labTestEntities
+                .Select(p => p.TestId).ToList()
+                .Select(async p => await _context.Tests.FindAsync(p))
+                .Select(t => t.Result)
+                .Where(i => i != null)
+                .ToList<MedTest>();
+
             return new LabTestPanelDto(
                 labTestPanelEntity: entity,
                 branchEntity: branchEntity,
-                testPanelEntity: testPanelEntity);
+                testPanelEntity: testPanelEntity,
+                labTestEntities: labTestEntities,
+                medTestEntities: medTestEntities);
         }
 
         private LabTestPanel ConvertToEntity(LabTestPanelDto dto)
