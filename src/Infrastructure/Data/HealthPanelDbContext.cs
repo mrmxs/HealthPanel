@@ -14,6 +14,9 @@ namespace HealthPanel.Infrastructure.Data
         public DbSet<Examination> Examinations { get; set; }
         public DbSet<TestPanel> TestPanels { get; set; }
         public DbSet<LabTestPanel> LabTestPanels { get; set; }
+        public DbSet<TestList> TestLists { get; set; }
+        public DbSet<TestToTestList> TestsToTestList { get; set; }
+
         public DbSet<UserLabTest> UserLabTests { get; set; }
         public DbSet<UserExamination> UserExaminations { get; set; }
         public DbSet<HealthFacility> HealthFacilities { get; set; }
