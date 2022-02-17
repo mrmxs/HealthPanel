@@ -9,9 +9,9 @@ namespace HealthPanel.Core.Entities
     {
         public int Id { get; internal set; }
         [Required]
-        public int TestListId { get; internal set; }
+        public int TestListId { get; set; }
         public int MedTestId { get; set; } // EX: список для госпитализации
-        public int LabTestId { get; set; } 
+        public int LabTestId { get; set; }
         public int ExaminationId { get; set; }
         public int TestPanelId { get; set; }
         public int LabTestPanelId { get; set; }
