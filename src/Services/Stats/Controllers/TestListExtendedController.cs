@@ -47,50 +47,72 @@ namespace HealthPanel.Services.Stats.Controllers
                 await _context.TestsToTestList.ToListAsync()
             ).Where(p => p.TestListId == entity.Id);
 
-            var medTestIds = tttls.Where(p => p.MedTestId != 0).Select(p => p.MedTestId);
-            var labTestIds = tttls.Where(p => p.LabTestId != 0).Select(p => p.LabTestId);
-            var examinationIds = tttls.Where(p => p.ExaminationId != 0).Select(p => p.ExaminationId);
-            var testPanelIds = tttls.Where(p => p.TestPanelId != 0).Select(p => p.TestPanelId);
-            var labTestPanelIds = tttls.Where(p => p.LabTestPanelId != 0).Select(p => p.LabTestPanelId);
+            // TestListItem.Item<object> stores itemID<int>
+            var medTestIds = tttls.Where(p => p.MedTestId != 0)
+                .Select(p => new TestListItemDto() { Index = p.Index, Item = p.MedTestId });
+            var labTestIds = tttls.Where(p => p.LabTestId != 0)
+                .Select(p => new TestListItemDto() { Index = p.Index, Item = p.LabTestId });
+            var examinationIds = tttls.Where(p => p.ExaminationId != 0)
+                .Select(p => new TestListItemDto() { Index = p.Index, Item = p.ExaminationId });
+            var testPanelIds = tttls.Where(p => p.TestPanelId != 0)
+                .Select(p => new TestListItemDto() { Index = p.Index, Item = p.TestPanelId });
+            var labTestPanelIds = tttls.Where(p => p.LabTestPanelId != 0)
+                .Select(p => new TestListItemDto() { Index = p.Index, Item = p.LabTestPanelId });
 
-            // Convert all ids to dtos
+            // Convert all IDs to DTOs, get all additional data 
+            // TestListItem.Item<object> stores itemDto<IDto>
             var medTests = medTestIds.Select(async id =>
                 {
-                    var entt = await _context.Tests.FindAsync(id);
-                    return new MedTestDto(entt);
+                    var entt = await _context.Tests.FindAsync(id.Item);
+
+                    id.Type = TestListType.MedTest;
+                    id.Item = new MedTestDto(entt);
+
+                    return id;
                 }).Select(t => t.Result);
 
             var labTests = labTestIds.Select(async id =>
                 {
-                    var entt = await _context.LabTests.FindAsync(id);
-                    return new LabTestDto(
+                    var entt = await _context.LabTests.FindAsync(id.Item);
+
+                    id.Type = TestListType.LabTest;
+                    id.Item = new LabTestDto(
                         labTestEntity: entt,
                         branchEntity: await _context.HealthFacilityBranches
                             .FindAsync(entt.HealthFacilityBranchId),
                         medTestEntity: await _context.Tests.FindAsync(entt.TestId)
                     );
+
+                    return id;
                 }).Select(t => t.Result);
 
             var examinations = examinationIds.Select(async id =>
                 {
-                    var entt = await _context.Examinations.FindAsync(id);
-                    return new ExaminationDto(
+                    var entt = await _context.Examinations.FindAsync(id.Item);
+
+                    id.Type = TestListType.Examination;
+                    id.Item = new ExaminationDto(
                         examinationEntity: entt,
                         branchEntity: await _context.HealthFacilityBranches
                             .FindAsync(entt.HealthFacilityBranchId),
                         medTestEntity: await _context.Tests.FindAsync(entt.TestId)
                     );
+
+                    return id;
                 }).Select(t => t.Result);
 
             var testPanels = testPanelIds.Select(async id =>
                 {
-                    var entt = await _context.TestPanels.FindAsync(id);
-                    return new TestPanelDto(entt);
+                    var entt = await _context.TestPanels.FindAsync(id.Item);
+                    id.Item = new TestPanelDto(entt);
+                    id.Type = TestListType.TestPanel;
+
+                    return id;
                 }).Select(t => t.Result);
 
             var labTestPanels = labTestPanelIds.Select(async id =>
                 {
-                    var entt = await _context.LabTestPanels.FindAsync(id);
+                    var entt = await _context.LabTestPanels.FindAsync(id.Item);
 
                     HealthFacilityBranch branchEntity =
                         await _context.HealthFacilityBranches
@@ -113,24 +135,24 @@ namespace HealthPanel.Services.Stats.Controllers
                         .Where(i => i != null)
                         .ToList<MedTest>();
 
-                    return new LabTestPanelDto(
+                    id.Type = TestListType.LabTestPanel;
+                    id.Item = new LabTestPanelDto(
                         labTestPanelEntity: entt,
                         branchEntity: branchEntity,
                         testPanelEntity: testPanelEntity,
                         labTestEntities: labTestEntities,
                         medTestEntities: medTestEntities);
+
+                    return id;
                 }).Select(t => t.Result);
 
-            // Add dtos to object
-            var tList = new TestListExtendedDto(entity);
-            medTests.ToList()?.ForEach(item => tList.Add(TestListType.MedTest, item));
-            labTests.ToList()?.ForEach(item => tList.Add(TestListType.LabTest, item));
-            examinations.ToList()?.ForEach(item => tList.Add(TestListType.Examination, item));
-            testPanels.ToList()?.ForEach(item => tList.Add(TestListType.TestPanel, item));
-            labTestPanels.ToList()?.ForEach(item => tList.Add(TestListType.LabTestPanel, item));
-
-            // todo INDEX
-            // List<KeyValuePair<TestListType, int>> index;
+            // Add DTOs to the tList Index
+            var tList = new TestListExtendedDto(entity)
+                .Add(medTests)
+                .Add(labTests)
+                .Add(examinations)
+                .Add(testPanels)
+                .Add(labTestPanels);
 
             // Return beautiful TestListExtended
             return tList;
