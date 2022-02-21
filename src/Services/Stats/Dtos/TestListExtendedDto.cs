@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using HealthPanel.Core.Entities;
-using Microsoft.AspNetCore.Http;
+using Microsoft.OpenApi.Extensions;
 
 namespace HealthPanel.Services.Stats.Dtos
 {
@@ -15,15 +14,17 @@ namespace HealthPanel.Services.Stats.Dtos
         LabTestPanel = 5
     }
 
+    public class TestListItem
+    {
+        public TestListType Type { get; set; }
+        public object Item { get; set; }
+    }
+
     public class TestListExtendedDto : IDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<MedTestDto> MedTests { get; internal set; }
-        public IEnumerable<LabTestDto> LabTests { get; internal set; }
-        public IEnumerable<ExaminationDto> Examinations { get; internal set; }
-        public IEnumerable<TestPanelDto> TestPanels { get; internal set; }
-        public IEnumerable<LabTestPanelDto> LabTestPanels { get; internal set; }
+        public SortedDictionary<string, TestListItem> Index { get; internal set; }
 
         public TestListExtendedDto() { }
         public TestListExtendedDto(TestList entity) : this(entity.Id, entity.Name) { }
@@ -31,92 +32,46 @@ namespace HealthPanel.Services.Stats.Dtos
         {
             this.Id = id;
             this.Name = name;
-
-            this.MedTests = new List<MedTestDto>();
-            this.LabTests = new List<LabTestDto>();
-            this.Examinations = new List<ExaminationDto>();
-            this.TestPanels = new List<TestPanelDto>();
-            this.LabTestPanels = new List<LabTestPanelDto>();
+            this.Index = new SortedDictionary<string, TestListItem>();
         }
 
-        public TestListExtendedDto Add(TestListType type, IDto item)
+        public void Add(TestListType type, IDto item, int index = 0)
         {
-            try
+            var itemI = $"{index}_{type.GetDisplayName()}{item.Id}";
+
+            switch (type)
             {
-                switch (type)
-                {
-                    case TestListType.MedTest:
-                        MedTests = MedTests.Append(item as MedTestDto);
-                        break;
-                    case TestListType.LabTest:
-                        LabTests = LabTests.Append(item as LabTestDto);
-                        break;
-                    case TestListType.Examination:
-                        Examinations = Examinations.Append(item as ExaminationDto);
-                        break;
-                    case TestListType.TestPanel:
-                        TestPanels = TestPanels.Append(item as TestPanelDto);
-                        break;
-                    case TestListType.LabTestPanel:
-                        LabTestPanels = LabTestPanels.Append(item as LabTestPanelDto);
-                        break;
+                case TestListType.MedTest:
+                    this.Index.Add(itemI,
+                        new TestListItem() { Type = type, Item = item as MedTestDto });
+                    break;
+                case TestListType.LabTest:
+                    this.Index.Add(itemI,
+                        new TestListItem() { Type = type, Item = item as LabTestDto });
+                    break;
+                case TestListType.Examination:
+                    this.Index.Add(itemI,
+                        new TestListItem() { Type = type, Item = item as ExaminationDto });
+                    break;
+                case TestListType.TestPanel:
+                    this.Index.Add(itemI,
+                        new TestListItem() { Type = type, Item = item as TestPanelDto });
+                    break;
+                case TestListType.LabTestPanel:
+                    this.Index.Add(itemI,
+                        new TestListItem() { Type = type, Item = item as LabTestPanelDto });
+                    break;
 
-                    default: throw new Exception("Wrong type");
-                }
-
-                return this;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public TestListExtendedDto Add(MedTestDto item) => this.Add(TestListType.MedTest, item);
-        public TestListExtendedDto Add(LabTestDto item) => this.Add(TestListType.LabTest, item);
-        public TestListExtendedDto Add(ExaminationDto item) => this.Add(TestListType.Examination, item);
-        public TestListExtendedDto Add(TestPanelDto item) => this.Add(TestListType.TestPanel, item);
-        public TestListExtendedDto Add(LabTestPanelDto item) => this.Add(TestListType.LabTestPanel, item);
-
-        public IDto Get(TestListType type, int id)
-        {
-            try
-            {
-                // check id exists?
-                return type switch
-                {
-                    TestListType.MedTest =>
-                        MedTests.FirstOrDefault(p => p.Id == id),
-                    TestListType.LabTest =>
-                        LabTests.FirstOrDefault(p => p.Id == id),
-                    TestListType.Examination =>
-                        Examinations.FirstOrDefault(p => p.Id == id),
-                    TestListType.TestPanel =>
-                        TestPanels.FirstOrDefault(p => p.Id == id),
-                    TestListType.LabTestPanel =>
-                        LabTestPanels.FirstOrDefault(p => p.Id == id),
-
-                    _ => throw new Exception("Wrong type"),
-                };
-            }
-            catch (Exception)
-            {
-                throw;
+                default:
+                    throw new Exception("Wrong type");
             }
         }
 
-        // public IDto GetIndex(int index)
-        // {
-        //     try
-        //     {
-        //         KeyValuePair<TestListType, int> keyValue = this._index.ElementAt(index);
+        public void Add(MedTestDto item, int index = 0) => this.Add(TestListType.MedTest, item, index);
+        public void Add(LabTestDto item, int index = 0) => this.Add(TestListType.LabTest, item, index);
+        public void Add(ExaminationDto item, int index = 0) => this.Add(TestListType.Examination, item, index);
+        public void Add(TestPanelDto item, int index = 0) => this.Add(TestListType.TestPanel, item, index);
+        public void Add(LabTestPanelDto item, int index = 0) => this.Add(TestListType.LabTestPanel, item, index);
 
-        //         return this.Get(keyValue.Key, keyValue.Value);
-        //     }
-        //     catch (Exception)
-        //     {
-        //         throw;
-        //     }
-        // }
     }
 }
