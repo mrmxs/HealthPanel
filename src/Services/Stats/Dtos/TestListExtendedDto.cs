@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HealthPanel.Core.Entities;
 using Microsoft.OpenApi.Extensions;
 
@@ -14,9 +15,10 @@ namespace HealthPanel.Services.Stats.Dtos
         LabTestPanel = 5
     }
 
-    public class TestListItem
+    public class TestListItemDto
     {
         public TestListType Type { get; set; }
+        public int Index { get; set; }
         public object Item { get; set; }
     }
 
@@ -24,7 +26,7 @@ namespace HealthPanel.Services.Stats.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public SortedDictionary<string, TestListItem> Index { get; internal set; }
+        public SortedDictionary<string, TestListItemDto> Index { get; internal set; }
 
         public TestListExtendedDto() { }
         public TestListExtendedDto(TestList entity) : this(entity.Id, entity.Name) { }
@@ -32,7 +34,26 @@ namespace HealthPanel.Services.Stats.Dtos
         {
             this.Id = id;
             this.Name = name;
-            this.Index = new SortedDictionary<string, TestListItem>();
+            this.Index = new SortedDictionary<string, TestListItemDto>();
+        }
+
+        public TestListExtendedDto Add(TestListItemDto item)
+        {
+            string index = string.Format("{0}_{1}{2}",
+                item.Index.ToString("0000"),
+                item.Type.GetDisplayName(),
+                (item.Item as IDto).Id
+            );
+            this.Index.Add(index, item);
+
+            return this;
+        }
+
+        public TestListExtendedDto Add(IEnumerable<TestListItemDto> items)
+        {
+            items.ToList()?.ForEach(p => this.Add(p));
+
+            return this;
         }
 
         public void Add(TestListType type, IDto item, int index = 0)
@@ -43,23 +64,23 @@ namespace HealthPanel.Services.Stats.Dtos
             {
                 case TestListType.MedTest:
                     this.Index.Add(itemI,
-                        new TestListItem() { Type = type, Item = item as MedTestDto });
+                        new TestListItemDto() { Item = item as MedTestDto, Type = type, Index = index });
                     break;
                 case TestListType.LabTest:
                     this.Index.Add(itemI,
-                        new TestListItem() { Type = type, Item = item as LabTestDto });
+                        new TestListItemDto() { Item = item as LabTestDto, Type = type, Index = index });
                     break;
                 case TestListType.Examination:
                     this.Index.Add(itemI,
-                        new TestListItem() { Type = type, Item = item as ExaminationDto });
+                        new TestListItemDto() { Item = item as ExaminationDto, Type = type, Index = index });
                     break;
                 case TestListType.TestPanel:
                     this.Index.Add(itemI,
-                        new TestListItem() { Type = type, Item = item as TestPanelDto });
+                        new TestListItemDto() { Item = item as TestPanelDto, Type = type, Index = index });
                     break;
                 case TestListType.LabTestPanel:
                     this.Index.Add(itemI,
-                        new TestListItem() { Type = type, Item = item as LabTestPanelDto });
+                        new TestListItemDto() { Item = item as LabTestPanelDto, Type = type, Index = index });
                     break;
 
                 default:
