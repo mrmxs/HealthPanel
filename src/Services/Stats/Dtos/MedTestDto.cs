@@ -4,11 +4,11 @@ namespace HealthPanel.Services.Stats.Dtos
 {
     public class MedTestDto : IDto
     {
-        public int Id { get; internal set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Units { get; set; }
-    
-        public MedTestDto() {}
+
+        public MedTestDto() { }
 
         public MedTestDto(MedTest testEntity)
         {
@@ -17,7 +17,7 @@ namespace HealthPanel.Services.Stats.Dtos
             this.Units = testEntity.Units;
         }
 
-    // public static explicit operator MedicalTestDto(MedicalTest entity)
+        // public static explicit operator MedicalTestDto(MedicalTest entity)
         // {
         //     return new MedicalTestDto
         //     {
@@ -26,7 +26,7 @@ namespace HealthPanel.Services.Stats.Dtos
         //         Units = entity.Units,
         //     };
         // }
-        
+
         // public static explicit operator MedicalTest(MedicalTestDto dto)
         // {
         //     return new MedicalTest

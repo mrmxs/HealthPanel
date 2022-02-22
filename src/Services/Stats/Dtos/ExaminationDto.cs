@@ -4,7 +4,7 @@ namespace HealthPanel.Services.Stats.Dtos
 {
     public class ExaminationDto : IDto
     {
-        public int Id { get; internal set; }
+        public int Id { get; set; }
         public int HealthFacilityBranchId { get; set; }  // todo (с типом Hospital/Clinic ?)
         public string HealthFacilityBranchName { get; set; }
         public int TestId { get; set; }
@@ -12,7 +12,7 @@ namespace HealthPanel.Services.Stats.Dtos
         public string CustomTestName { get; set; }
 
 
-        public ExaminationDto() {}
+        public ExaminationDto() { }
 
         public ExaminationDto(
             Examination examinationEntity,

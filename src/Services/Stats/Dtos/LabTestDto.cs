@@ -5,7 +5,7 @@ namespace HealthPanel.Services.Stats.Dtos
 {
     public class LabTestDto : IDto
     {
-        public int Id { get; internal set; }
+        public int Id { get; set; }
         public int HealthFacilityBranchId { get; set; }
         public string HealthFacilityBranchName { get; set; }
         public int TestId { get; set; }
@@ -14,10 +14,10 @@ namespace HealthPanel.Services.Stats.Dtos
         public string Units { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
-        
-        public LabTestDto () {}            
-        
-        public LabTestDto (            
+
+        public LabTestDto() { }
+
+        public LabTestDto(
             LabTest labTestEntity,
             HealthFacilityBranch branchEntity,
             MedTest medTestEntity)
@@ -42,7 +42,7 @@ namespace HealthPanel.Services.Stats.Dtos
         //         Units = entity.Units,
         //     };
         // }
-        
+
         // public static explicit operator LabMedicalTest(LabMedicalTestDto dto)
         // {
         //     return new LabMedicalTest
