@@ -14,11 +14,9 @@ namespace HealthPanel.Services.Stats.DAL
         Task<MedTestDto> Map<T, D>(MedTest entity)
             where T : MedTest
             where D : MedTestDto;
-
         Task<LabTestDto> Map<T, D>(LabTest entity)
             where T : LabTest
             where D : LabTestDto;
-
         Task<ExaminationDto> Map<T, D>(Examination entity)
             where T : Examination
             where D : ExaminationDto;
@@ -26,7 +24,6 @@ namespace HealthPanel.Services.Stats.DAL
         Task<TestPanelDto> Map<T, D>(TestPanel entity)
             where T : TestPanel
             where D : TestPanelDto;
-
         Task<LabTestPanelDto> Map<T, D>(LabTestPanel entity)
             where T : LabTestPanel
             where D : LabTestPanelDto;
@@ -34,6 +31,31 @@ namespace HealthPanel.Services.Stats.DAL
         Task<TestListDto> Map<T, D>(TestList entity)
             where T : TestList
             where D : TestListDto;
+        Task<TestToTestListDto> Map<T, D>(TestToTestList entity)
+            where T : TestToTestList
+            where D : TestToTestListDto;
+
+
+        Task<UserDto> Map<T, D>(User entity)
+            where T : User
+            where D : UserDto;
+        Task<UserLabTestDto> Map<T, D>(UserLabTest entity)
+            where T : UserLabTest
+            where D : UserLabTestDto;
+        Task<UserExaminationDto> Map<T, D>(UserExamination entity)
+            where T : UserExamination
+            where D : UserExaminationDto;
+
+        Task<HealthFacilityDto> Map<T, D>(HealthFacility entity)
+            where T : HealthFacility
+            where D : HealthFacilityDto;
+        Task<HealthFacilityBranchDto> Map<T, D>(HealthFacilityBranch entity)
+            where T : HealthFacilityBranch
+            where D : HealthFacilityBranchDto;
+
+        Task<DoctorDto> Map<T, D>(Doctor entity)
+            where T : Doctor
+            where D : DoctorDto;
 
         #endregion
 

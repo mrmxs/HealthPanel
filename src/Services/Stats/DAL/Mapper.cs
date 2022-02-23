@@ -20,28 +20,49 @@ namespace HealthPanel.Services.Stats.DAL
             _sugar = sugar;
         }
 
-        #region Basic
-
         public async Task<IDto> Map(IEntity entity)
         {
-            return entity.GetType().Name switch
+            Dictionary<Type, int> types = new()
             {
-                "MedTest" =>
-                    await this.Map<MedTest, MedTestDto>(entity as MedTest),
-                "LabTest" =>
-                    await this.Map<LabTest, LabTestDto>(entity as LabTest),
-                "Examination" =>
-                    await this.Map<Examination, ExaminationDto>(entity as Examination),
-                "TestPanel" =>
-                    await this.Map<TestPanel, TestPanelDto>(entity as TestPanel),
-                "LabTestPanel" =>
-                    await this.Map<LabTestPanel, LabTestPanelDto>(entity as LabTestPanel),
-                "TestList" =>
-                    await this.Map<TestList, TestListDto>(entity as TestList),
+                { typeof(MedTest), 0 },
+                { typeof(LabTest), 1 },
+                { typeof(Examination), 2 },
+                { typeof(TestPanel), 3 },
+                { typeof(LabTestPanel), 4 },
+                { typeof(TestList), 5 },
+                { typeof(TestToTestList), 6 },
+                { typeof(User), 7 },
+                { typeof(UserLabTest), 8 },
+                { typeof(UserExamination), 9 },
+                { typeof(HealthFacility), 10 },
+                { typeof(HealthFacilityBranch), 11 },
+                { typeof(Doctor), 12 }
+            };
+
+            return types[entity.GetType()] switch
+            {
+                0 => await this.Map<MedTest, MedTestDto>(entity as MedTest),
+                1 => await this.Map<LabTest, LabTestDto>(entity as LabTest),
+                2 => await this.Map<Examination, ExaminationDto>(entity as Examination),
+                3 => await this.Map<TestPanel, TestPanelDto>(entity as TestPanel),
+                4 => await this.Map<LabTestPanel, LabTestPanelDto>(entity as LabTestPanel),
+
+                5 => await this.Map<TestList, TestListDto>(entity as TestList),
+                6 => await this.Map<TestToTestList, TestToTestListDto>(entity as TestToTestList),
+
+                7 => await this.Map<User, UserDto>(entity as User),
+                8 => await this.Map<UserLabTest, UserLabTestDto>(entity as UserLabTest),
+                9 => await this.Map<UserExamination, UserExaminationDto>(entity as UserExamination),
+
+                10 => await this.Map<HealthFacility, HealthFacilityDto>(entity as HealthFacility),
+                11 => await this.Map<HealthFacilityBranch, HealthFacilityBranchDto>(entity as HealthFacilityBranch),
+                12 => await this.Map<Doctor, DoctorDto>(entity as Doctor),
 
                 _ => throw new System.NotImplementedException(),
             };
         }
+
+        #region Basic Test Types
 
         public async Task<MedTestDto> Map<T, D>(MedTest entity)
             where T : MedTest where D : MedTestDto
@@ -103,13 +124,85 @@ namespace HealthPanel.Services.Stats.DAL
             );
         }
 
+        public async Task<TestListDto> Map<T, D>(TestList entity)
+            where T : TestList
+            where D : TestListDto
+            => new(entity);
+
+        public async Task<TestToTestListDto> Map<T, D>(TestToTestList entity)
+            where T : TestToTestList
+            where D : TestToTestListDto
+            => new(entity);
+
+        #endregion
+
+        #region User
+
+        public async Task<UserDto> Map<T, D>(User entity)
+            where T : User
+            where D : UserDto
+            => new(entity);
+
+        public async Task<UserLabTestDto> Map<T, D>(UserLabTest entity)
+            where T : UserLabTest
+            where D : UserLabTestDto
+        {
+            var labTest = await _sugar.LTests.Id(entity.LabTestId);
+            var branchEntity = await _sugar.HFBs.Id(labTest.HealthFacilityBranchId);
+            var medTestEntity = await _sugar.Tests.Id(labTest.TestId);
+            var userEntity = await _sugar.Usrs.Id(entity.UserId);
+
+            return new UserLabTestDto(
+                userTestEntity: entity,
+                labTestEntity: labTest,
+                branchEntity: branchEntity,
+                medTestEntity: medTestEntity,
+                userEntity: userEntity
+            );
+        }
+
+        public async Task<UserExaminationDto> Map<T, D>(UserExamination entity)
+            where T : UserExamination
+            where D : UserExaminationDto
+        {
+            var examination = await _sugar.Exams.Id(entity.ExaminationId);
+            var branchEntity = await _sugar.HFBs.Id(examination.HealthFacilityBranchId);
+            var medTestEntity = await _sugar.Tests.Id(examination.TestId);
+            var doctorEntity = await _sugar.Docs.Id(entity.DoctorId);
+            var userEntity = await _sugar.Usrs.Id(entity.UserId);
+
+            return new UserExaminationDto(
+                 userExaminationEntity: entity,
+                 examinationEntity: examination,
+                 branchEntity: branchEntity,
+                 medTestEntity: medTestEntity,
+                 doctorEntity: doctorEntity,
+                 userEntity: userEntity
+             );
+        }
+
+        #endregion
+
+        #region Health Facility
+        public async Task<HealthFacilityDto> Map<T, D>(HealthFacility entity)
+            where T : HealthFacility
+            where D : HealthFacilityDto
+            => new(entity);
+
+        public async Task<HealthFacilityBranchDto> Map<T, D>(HealthFacilityBranch entity)
+            where T : HealthFacilityBranch
+            where D : HealthFacilityBranchDto
+            => new(entity);
+
+        public async Task<DoctorDto> Map<T, D>(Doctor entity)
+            where T : Doctor
+            where D : DoctorDto
+            => new(entity);
+
         #endregion
 
         #region Extended
 
-        public async Task<TestListDto> Map<T, D>(TestList entity)
-            where T : TestList where D : TestListDto
-            => new(entity);
         public IEnumerable<TestListItemDto> Map<T, D>(
             TestListType type, IEnumerable<TestToTestList> tttls)
             where T : IEnumerable<TestToTestList>
