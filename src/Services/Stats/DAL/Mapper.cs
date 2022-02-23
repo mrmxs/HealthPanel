@@ -240,6 +240,7 @@ namespace HealthPanel.Services.Stats.DAL
 
                 // Map Entity to TestListItemDto
                 return new TestListItemDto(
+                    id: p.Id,
                     index: p.Index,
                     type: type,
                     item: await this.Map(entity)
