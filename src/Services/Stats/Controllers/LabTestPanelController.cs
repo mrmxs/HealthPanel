@@ -99,24 +99,20 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             foreach (var testId in dto.LabTestIds)
             {
-                // todo refactoring to repos
                 if (!_context.LabTests.Any(e => e.Id == testId))
                 {
                     return BadRequest();
                 }
             }
 
-            var newEntity = ConvertToEntity(dto);
+            var entity = ConvertToEntity(dto);
 
-            _context.LabTestPanels.Add(newEntity);
-            // on SaveChangesAsync() after calling DetectChanges()
-            // newEntity is rewritted and got actual Id,
-            // which can be used later
+            _context.LabTestPanels.Add(entity);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id }, 
-                await _mapper.Map<LabTestPanel, LabTestPanelDto>(newEntity));
+                new { id = entity.Id },
+                await _mapper.Map<LabTestPanel, LabTestPanelDto>(entity));
         }
 
         // DELETE: api/LabTestPanel/5

@@ -85,17 +85,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<TestPanelDto>> Post(TestPanelDto dto)
         {
-            var newEntity = ConvertToEntity(dto);
+            var entity = ConvertToEntity(dto);
 
-            _context.TestPanels.Add(newEntity);
-            // on SaveChangesAsync() after calling DetectChanges()
-            // newEntity is rewritted and got actual Id,
-            // which can be used later
+            _context.TestPanels.Add(entity);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id }, 
-                await _mapper.Map<TestPanel, TestPanelDto>(newEntity));
+                new { id = entity.Id },
+                await _mapper.Map<TestPanel, TestPanelDto>(entity));
         }
 
         // DELETE: api/TestPanel/5

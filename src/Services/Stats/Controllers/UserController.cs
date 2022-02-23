@@ -85,14 +85,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<UserDto>> Post(UserDto dto)
         {
-            _context.Users.Add(ConvertToEntity(dto));
+            var entity = ConvertToEntity(dto);
 
-            var newEntityId = await _context.SaveChangesAsync();
-            var newEntity = await _context.Users.FindAsync(newEntityId);
+            _context.Users.Add(entity);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id },
-                await _mapper.Map<User, UserDto>(newEntity));
+                new { id = entity.Id },
+                await _mapper.Map<User, UserDto>(entity));
         }
 
         // DELETE: api/User/5

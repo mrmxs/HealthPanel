@@ -86,16 +86,14 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpPost]
         public override async Task<ActionResult<MedTestDto>> Post(MedTestDto dto)
         {
-            _context.Tests.Add(ConvertToEntity(dto));
+            var entity = ConvertToEntity(dto);
 
-            var newEntityId = await _context.SaveChangesAsync();
-            var newEntity = await _context.Tests.FindAsync(newEntityId);
+            _context.Tests.Add(entity);
+            await _context.SaveChangesAsync();
 
-            // The C# nameof keyword is used to avoid hard-coding 
-            // the action name in the CreatedAtAction call.
             return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id },
-                await _mapper.Map<MedTest, MedTestDto>(newEntity));
+                new { id = entity.Id },
+                await _mapper.Map<MedTest, MedTestDto>(entity));
         }
 
         // DELETE: api/Test/5

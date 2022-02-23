@@ -89,16 +89,14 @@ namespace HealthPanel.Services.Stats.Controllers
         public override async Task<ActionResult<ExaminationDto>> Post(
             ExaminationDto dto)
         {
-            //todo: equal LabTestController: healthFacilityBranchId & testId validation -> repos
+            var entity = this.ConvertToEntity(dto);
 
-            _context.Examinations.Add(this.ConvertToEntity(dto));
-
-            var newEntityId = await _context.SaveChangesAsync();
-            var newEntity = await _context.Examinations.FindAsync(newEntityId);
+            _context.Examinations.Add(entity);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
-                 new { id = newEntity.Id },
-                 await _mapper.Map<Examination, ExaminationDto>(newEntity));
+                 new { id = entity.Id },
+                 await _mapper.Map<Examination, ExaminationDto>(entity));
         }
 
         // DELETE: api/Examination/5
