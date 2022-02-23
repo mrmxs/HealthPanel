@@ -58,7 +58,7 @@ namespace HealthPanel.Services.Stats.DAL
                 11 => await this.Map<HealthFacilityBranch, HealthFacilityBranchDto>(entity as HealthFacilityBranch),
                 12 => await this.Map<Doctor, DoctorDto>(entity as Doctor),
 
-                _ => throw new System.NotImplementedException(),
+                _ => throw new Exception(),
             };
         }
 
@@ -220,7 +220,7 @@ namespace HealthPanel.Services.Stats.DAL
                     TestListType.Examination => p.ExaminationId,
                     TestListType.TestPanel => p.TestPanelId,
                     TestListType.LabTestPanel => p.LabTestPanelId,
-                    _ => throw new NotImplementedException(),
+                    _ => throw new Exception(),
                 };
 
                 return id != 0;
@@ -235,7 +235,7 @@ namespace HealthPanel.Services.Stats.DAL
                     TestListType.Examination => await _sugar.Exams.Id(id),
                     TestListType.TestPanel => await _sugar.TPs.Id(id),
                     TestListType.LabTestPanel => await _sugar.LTPs.Id(id),
-                    _ => throw new NotImplementedException(),
+                    _ => throw new Exception(),
                 };
 
                 // Map Entity to TestListItemDto
