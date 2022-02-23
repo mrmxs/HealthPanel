@@ -10,6 +10,7 @@ namespace HealthPanel.Services.Stats.DAL
 {
     public interface IMapper
     {
+        Task<IDto> Map(IEntity entity);
         Task<MedTestDto> Map(MedTest entity);
         Task<LabTestDto> Map(LabTest entity);
         Task<ExaminationDto> Map(Examination entity);
@@ -29,6 +30,19 @@ namespace HealthPanel.Services.Stats.DAL
             _sugar = sugar;
         }
 
+        public async Task<IDto> Map(IEntity entity)
+        {
+            return entity.GetType().FullName switch
+            {
+                "HealthPanel.Core.Entities.MedTest" => await this.Map(entity as MedTest),
+                "HealthPanel.Core.Entities.LabTest" => await this.Map(entity as LabTest),
+                "HealthPanel.Core.Entities.Examination" => await this.Map(entity as Examination),
+                "HealthPanel.Core.Entities.TestPanel" => await this.Map(entity as TestPanel),
+                "HealthPanel.Core.Entities.LabTestPanel" => await this.Map(entity as LabTestPanel),
+
+                _ => throw new System.NotImplementedException(),
+            };
+        }
 
         public async Task<MedTestDto> Map(MedTest entity) => new(entity);
         public async Task<LabTestDto> Map(LabTest entity)

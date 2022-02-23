@@ -48,56 +48,57 @@ namespace HealthPanel.Services.Stats.Controllers
                 await _context.TestsToTestList.ToListAsync()
             ).Where(p => p.TestListId == entity.Id);
 
-            var medTests = tttls.Where(p => p.MedTestId != 0)
-                .Select(async p => new TestListItemDto()
+            // Get DTOs to all items and add them to the TestList Index
+            return new TestListExtendedDto(entity)
+                .Add(this.TestListItemDtos(TestListType.MedTest, tttls))
+                .Add(this.TestListItemDtos(TestListType.LabTest, tttls))
+                .Add(this.TestListItemDtos(TestListType.Examination, tttls))
+                .Add(this.TestListItemDtos(TestListType.TestPanel, tttls))
+                .Add(this.TestListItemDtos(TestListType.LabTestPanel, tttls));
+        }
+
+        private IEnumerable<TestListItemDto> TestListItemDtos(
+               TestListType type,
+               IEnumerable<TestToTestList> tttls)
+        {
+            int id = 0;
+
+            return tttls.Where(p =>
+            {
+                // Find all ids of given type
+                id = type switch
+                {
+                    TestListType.MedTest => p.MedTestId,
+                    TestListType.LabTest => p.LabTestId,
+                    TestListType.Examination => p.ExaminationId,
+                    TestListType.TestPanel => p.TestPanelId,
+                    TestListType.LabTestPanel => p.LabTestPanelId,
+                    _ => throw new NotImplementedException(),
+                };
+
+                return id != 0;
+            })
+            .Select(async p =>
+            {
+                // Get entity of given type by id
+                IEntity entity = type switch
+                {
+                    TestListType.MedTest => await _sugar.Tests.Id(id),
+                    TestListType.LabTest => await _sugar.LTests.Id(id),
+                    TestListType.Examination => await _sugar.Exams.Id(id),
+                    TestListType.TestPanel => await _sugar.TPs.Id(id),
+                    TestListType.LabTestPanel => await _sugar.LTPs.Id(id),
+                    _ => throw new NotImplementedException(),
+                };
+
+                // Map Entity to TestListItemDto
+                return new TestListItemDto()
                 {
                     Index = p.Index,
-                    Type = TestListType.MedTest,
-                    Item = await _mapper.Map(await _sugar.Tests.Id(p.MedTestId)),
-                }).Select(t => t.Result);
-
-            var labTests = tttls.Where(p => p.LabTestId != 0)
-                .Select(async p => new TestListItemDto()
-                {
-                    Index = p.Index,
-                    Type = TestListType.LabTest,
-                    Item = await _mapper.Map(await _sugar.LTests.Id(p.LabTestId))
-                }).Select(t => t.Result);
-
-            var examinations = tttls.Where(p => p.ExaminationId != 0)
-                .Select(async p => new TestListItemDto()
-                {
-                    Index = p.Index,
-                    Type = TestListType.Examination,
-                    Item = await _mapper.Map(await _sugar.Exams.Id(p.ExaminationId))
-                }).Select(t => t.Result);
-
-            var testPanels = tttls.Where(p => p.TestPanelId != 0)
-                .Select(async p => new TestListItemDto()
-                {
-                    Index = p.Index,
-                    Type = TestListType.TestPanel,
-                    Item = await _mapper.Map(await _sugar.TPs.Id(p.TestPanelId))
-                }).Select(t => t.Result);
-
-            var labTestPanels = tttls.Where(p => p.LabTestPanelId != 0)
-                .Select(async p => new TestListItemDto()
-                {
-                    Index = p.Index,
-                    Type = TestListType.LabTestPanel,
-                    Item = await _mapper.Map(await _sugar.LTPs.Id(p.LabTestPanelId))
-                }).Select(t => t.Result);
-
-            // Add DTOs to the tList Index
-            var tList = new TestListExtendedDto(entity)
-                .Add(medTests)
-                .Add(labTests)
-                .Add(examinations)
-                .Add(testPanels)
-                .Add(labTestPanels);
-
-            // Return beautiful TestListExtended
-            return tList;
+                    Type = type,
+                    Item = await _mapper.Map(entity)
+                };
+            }).Select(t => t.Result);
         }
     }
 }
