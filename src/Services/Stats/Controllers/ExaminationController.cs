@@ -22,13 +22,13 @@ namespace HealthPanel.Services.Stats.Controllers
         public override async Task<ActionResult<IEnumerable<ExaminationDto>>> Get()
         {
             var entities = await _context.Examinations.ToListAsync();
-            
+
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<Examination, ExaminationDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
-            
+
             return Ok(dtos);
         }
 
@@ -43,25 +43,25 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<Examination, ExaminationDto>(entity));
         }
 
         // PUT: api/Examination/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public override async Task<IActionResult> Put(int id, ExaminationDto dto )
+        public override async Task<IActionResult> Put(int id, ExaminationDto dto)
         {
             if (id != dto.Id)
             {
                 return BadRequest();
             }
-            
+
             var modified = await _context.Examinations.FindAsync(id);
 
             modified.HealthFacilityBranchId = dto.HealthFacilityBranchId;
             modified.TestId = dto.TestId; //todo bad practice
             modified.CustomName = dto.CustomTestName;
-            
+
             _context.Entry(modified).State = EntityState.Modified;
 
             try
@@ -98,7 +98,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             return CreatedAtAction(nameof(Post),
                  new { id = newEntity.Id },
-                 await this.EntityToDtoAsync(newEntity));
+                 await _mapper.Map<Examination, ExaminationDto>(newEntity));
         }
 
         // DELETE: api/Examination/5
@@ -119,15 +119,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.Examinations.Any(e => e.Id == id);
-
-        protected override async Task<ExaminationDto> EntityToDtoAsync(
-            Examination entity)
-            => new ExaminationDto( //todo move to repository
-                examinationEntity:  entity,
-                branchEntity:   await _context.HealthFacilityBranches
-                    .FindAsync(entity.HealthFacilityBranchId),
-                medTestEntity:  await _context.Tests.FindAsync(entity.TestId)
-            );
 
         private Examination ConvertToEntity(ExaminationDto dto)
             => new()

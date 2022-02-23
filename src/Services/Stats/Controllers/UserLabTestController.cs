@@ -25,7 +25,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.UserLabTests.ToListAsync();
 
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<UserLabTest, UserLabTestDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -44,7 +44,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<UserLabTest, UserLabTestDto>(entity));
         }
 
         // PUT: api/UserLabTest/5
@@ -100,7 +100,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             return CreatedAtAction(nameof(Post),
                 new { id = newEntity.Id },
-                await this.EntityToDtoAsync(newEntity));
+                await _mapper.Map<UserLabTest, UserLabTestDto>(newEntity));
         }
 
         // DELETE: api/UserLabTest/5
@@ -121,22 +121,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.UserLabTests.Any(e => e.Id == id);
-
-        protected override async Task<UserLabTestDto> EntityToDtoAsync(UserLabTest entity)  
-        {
-            var labTest =
-                await _context.LabTests.FindAsync(entity.LabTestId);
-
-            //todo move to repository 
-            return new UserLabTestDto(
-                userTestEntity: entity, 
-                labTestEntity:  labTest,
-                branchEntity:   await _context.HealthFacilityBranches
-                    .FindAsync(labTest.HealthFacilityBranchId),
-                medTestEntity:  await _context.Tests.FindAsync(labTest.TestId),
-                userEntity:           await _context.Users.FindAsync(entity.UserId) 
-            );
-        }
 
         private UserLabTest ConvertToEntity(UserLabTestDto dto)
         {

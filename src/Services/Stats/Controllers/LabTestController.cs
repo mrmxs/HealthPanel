@@ -20,15 +20,15 @@ namespace HealthPanel.Services.Stats.Controllers
         // GET: api/LabTest
         [HttpGet]
         public override async Task<ActionResult<IEnumerable<LabTestDto>>> Get()
-        {            
+        {
             var entities = await _context.LabTests.ToListAsync();
-            
+
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<LabTest, LabTestDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
-            
+
             return Ok(dtos);
         }
 
@@ -43,7 +43,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<LabTest, LabTestDto>(entity));
         }
 
         // PUT: api/LabTest/5
@@ -57,7 +57,7 @@ namespace HealthPanel.Services.Stats.Controllers
             }
 
             var modified = await _context.LabTests.FindAsync(id);
-                       
+
             modified.HealthFacilityBranchId = dto.HealthFacilityBranchId;
             modified.TestId = dto.TestId;
             modified.CustomName = dto.CustomTestName;
@@ -99,7 +99,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             return CreatedAtAction(nameof(Post),
                new { id = newEntity.Id },
-               await this.EntityToDtoAsync(newEntity));
+               await _mapper.Map<LabTest, LabTestDto>(newEntity));
         }
 
         // DELETE: api/LabTest/5
@@ -120,14 +120,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.LabTests.Any(e => e.Id == id);
-
-        protected override async Task<LabTestDto> EntityToDtoAsync(LabTest entity)
-            => new LabTestDto( //todo move to repository
-                labTestEntity:  entity,
-                branchEntity:   await _context.HealthFacilityBranches
-                    .FindAsync(entity.HealthFacilityBranchId),
-                medTestEntity:  await _context.Tests.FindAsync(entity.TestId)
-            );
 
         private LabTest ConvertToEntity(LabTestDto dto)
             => new()

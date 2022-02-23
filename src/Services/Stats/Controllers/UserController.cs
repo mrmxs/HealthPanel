@@ -24,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.Users.ToListAsync();
 
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<User, UserDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -43,7 +43,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<User, UserDto>(entity));
         }
 
         // PUT: api/User/5
@@ -92,7 +92,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             return CreatedAtAction(nameof(Post),
                 new { id = newEntity.Id },
-                await this.EntityToDtoAsync(newEntity));
+                await _mapper.Map<User, UserDto>(newEntity));
         }
 
         // DELETE: api/User/5
@@ -113,9 +113,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.Users.Any(e => e.Id == id);
-
-        protected override async Task<UserDto> EntityToDtoAsync(User entity)
-            => new UserDto(entity);
 
         private User ConvertToEntity(UserDto dto)
         => new()

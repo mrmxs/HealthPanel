@@ -24,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.Tests.ToListAsync();
             
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<MedTest, MedTestDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -43,7 +43,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<MedTest, MedTestDto>(entity));
         }
 
         // PUT: api/Test/5
@@ -91,11 +91,11 @@ namespace HealthPanel.Services.Stats.Controllers
             var newEntityId = await _context.SaveChangesAsync();
             var newEntity = await _context.Tests.FindAsync(newEntityId);
 
-            return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id },
-                await this.EntityToDtoAsync(newEntity));
             // The C# nameof keyword is used to avoid hard-coding 
             // the action name in the CreatedAtAction call.
+            return CreatedAtAction(nameof(Post),
+                new { id = newEntity.Id },
+                await _mapper.Map<MedTest, MedTestDto>(newEntity));
         }
 
         // DELETE: api/Test/5
@@ -116,9 +116,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.Tests.Any(e => e.Id == id);
-
-        protected override async Task<MedTestDto> EntityToDtoAsync(MedTest entity)
-            => new MedTestDto(entity);
 
         private MedTest ConvertToEntity(MedTestDto dto)
             => new()

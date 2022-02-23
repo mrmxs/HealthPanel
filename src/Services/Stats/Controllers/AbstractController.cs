@@ -6,11 +6,11 @@ using HealthPanel.Services.Stats.DAL;
 using HealthPanel.Services.Stats.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HealthPanel.Services.Stats.Controllers //Stats.Controllers
+namespace HealthPanel.Services.Stats.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class AbstractController<T,D> : ControllerBase 
+    public abstract class AbstractController<T, D> : ControllerBase
             where T : IEntity
             where D : IDto
     {
@@ -47,8 +47,6 @@ namespace HealthPanel.Services.Stats.Controllers //Stats.Controllers
 
 
         protected abstract bool Exists(int id);
-
-        protected abstract Task<D> EntityToDtoAsync(T entity); //TODO
 
         protected BadRequestObjectResult CustomBadRequest(object error)
         {
