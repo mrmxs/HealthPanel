@@ -15,15 +15,17 @@ namespace HealthPanel.Services.Stats.Dtos
         LabTestPanel = 5
     }
 
-    public class TestListItemDto
+    public class TestListItemDto : IDto
     {
+        public int Id { get; set; }
         public TestListType Type { get; set; }
         public int Index { get; set; }
         public object Item { get; set; }
 
         public TestListItemDto() { }
-        public TestListItemDto(int index, TestListType type, object item)
+        public TestListItemDto(int id, int index, TestListType type, object item)
         {
+            this.Id = id;
             this.Index = index;
             this.Type = type;
             this.Item = item;
