@@ -16,12 +16,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class UserExaminationController
         : AbstractController<UserExamination, UserExaminationDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public UserExaminationController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public UserExaminationController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/UserExamination
         [HttpGet]

@@ -15,12 +15,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class HealthFacilityController
         : AbstractController<HealthFacility, HealthFacilityDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public HealthFacilityController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public HealthFacilityController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/HealthFacility
         [HttpGet]

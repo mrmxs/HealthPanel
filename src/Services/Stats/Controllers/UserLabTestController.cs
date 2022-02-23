@@ -16,12 +16,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class UserLabTestController
         : AbstractController<UserLabTest, UserLabTestDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public UserLabTestController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public UserLabTestController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/UserLabTest
         [HttpGet]

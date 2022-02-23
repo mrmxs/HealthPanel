@@ -15,12 +15,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class TestListController
         : AbstractController<TestList, TestListDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public TestListController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public TestListController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/TestList
         [HttpGet]
