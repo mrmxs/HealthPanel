@@ -1,22 +1,30 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HealthPanel.Core.Entities;
 using HealthPanel.Infrastructure.Data;
+using HealthPanel.Services.Stats.DAL;
 using HealthPanel.Services.Stats.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
-namespace HealthPanel.Services.Stats.Controllers //Stats.Controllers
+namespace HealthPanel.Services.Stats.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class AbstractController<T,D> : ControllerBase 
+    public abstract class AbstractController<T, D> : ControllerBase
             where T : IEntity
             where D : IDto
     {
+        protected readonly HealthPanelDbContext _context;
+        protected readonly ISugarContext _sugar;
+        protected readonly IMapper _mapper;
+
+        public AbstractController(HealthPanelDbContext context)
+        {
+            _context = context;
+            _sugar = new SugarContext(context);
+            _mapper = new Mapper(context, _sugar);
+        }
+
         // GET api/base
         [HttpGet]
         public abstract Task<ActionResult<IEnumerable<D>>> Get();
@@ -39,8 +47,6 @@ namespace HealthPanel.Services.Stats.Controllers //Stats.Controllers
 
 
         protected abstract bool Exists(int id);
-
-        protected abstract Task<D> EntityToDtoAsync(T entity);
 
         protected BadRequestObjectResult CustomBadRequest(object error)
         {

@@ -15,12 +15,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class LabTestPanelController
         : AbstractController<LabTestPanel, LabTestPanelDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public LabTestPanelController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public LabTestPanelController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/LabTestPanel
         [HttpGet]
@@ -29,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.LabTestPanels.ToListAsync();
 
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<LabTestPanel, LabTestPanelDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -48,7 +43,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<LabTestPanel, LabTestPanelDto>(entity));
         }
 
         // PUT: api/LabTestPanel/5
@@ -120,7 +115,8 @@ namespace HealthPanel.Services.Stats.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id }, await this.EntityToDtoAsync(newEntity));
+                new { id = newEntity.Id }, 
+                await _mapper.Map<LabTestPanel, LabTestPanelDto>(newEntity));
         }
 
         // DELETE: api/LabTestPanel/5
@@ -141,38 +137,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.LabTestPanels.Any(e => e.Id == id);
-
-        protected override async Task<LabTestPanelDto> EntityToDtoAsync(
-            LabTestPanel entity)
-        {
-            HealthFacilityBranch branchEntity =
-                await _context.HealthFacilityBranches
-                    .FindAsync(entity.HealthFacilityBranchId);
-
-            TestPanel testPanelEntity =
-                await _context.TestPanels
-                    .FindAsync(entity.TestPanelId);
-
-            List<LabTest> labTestEntities = entity.LabTestIds.ToList()
-                .Select(async p => await _context.LabTests.FindAsync(p))
-                .Select(t => t.Result)
-                .Where(i => i != null)
-                .ToList<LabTest>();
-
-            List<MedTest> medTestEntities = labTestEntities
-                .Select(p => p.TestId).ToList()
-                .Select(async p => await _context.Tests.FindAsync(p))
-                .Select(t => t.Result)
-                .Where(i => i != null)
-                .ToList<MedTest>();
-
-            return new LabTestPanelDto(
-                labTestPanelEntity: entity,
-                branchEntity: branchEntity,
-                testPanelEntity: testPanelEntity,
-                labTestEntities: labTestEntities,
-                medTestEntities: medTestEntities);
-        }
 
         private LabTestPanel ConvertToEntity(LabTestPanelDto dto)
             => new()

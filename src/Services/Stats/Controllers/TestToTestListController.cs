@@ -15,12 +15,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class TestToTestListController
         : AbstractController<TestToTestList, TestToTestListDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public TestToTestListController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public TestToTestListController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/TestToTestList
         [HttpGet]
@@ -29,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.TestsToTestList.ToListAsync();
 
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<TestToTestList, TestToTestListDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -48,7 +43,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<TestToTestList, TestToTestListDto>(entity));
         }
 
         // PUT: api/TestToTestList/5
@@ -108,7 +103,8 @@ namespace HealthPanel.Services.Stats.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id }, await this.EntityToDtoAsync(newEntity));
+                new { id = newEntity.Id },
+                await _mapper.Map<TestToTestList, TestToTestListDto>(newEntity));
         }
 
         // DELETE: api/TestToTestList/5
@@ -129,10 +125,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.TestsToTestList.Any(e => e.Id == id);
-
-        protected override async Task<TestToTestListDto> EntityToDtoAsync(
-            TestToTestList entity)
-            => new TestToTestListDto(entity);
 
         private TestToTestList ConvertToEntity(TestToTestListDto dto)
             => new()

@@ -16,12 +16,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class UserExaminationController
         : AbstractController<UserExamination, UserExaminationDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public UserExaminationController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public UserExaminationController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/UserExamination
         [HttpGet]
@@ -30,7 +25,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.UserExaminations.ToListAsync();
 
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<UserExamination, UserExaminationDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -49,7 +44,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<UserExamination, UserExaminationDto>(entity));
         }
 
         // PUT: api/UserExamination/5
@@ -106,7 +101,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             return CreatedAtAction(nameof(Post),
                 new { id = newEntity.Id },
-                await this.EntityToDtoAsync(newEntity));
+                await _mapper.Map<UserExamination, UserExaminationDto>(newEntity));
         }
 
         // DELETE: api/UserExamination/5
@@ -127,24 +122,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id) 
             => _context.UserExaminations.Any(e => e.Id == id);
-
-        protected override async Task<UserExaminationDto> EntityToDtoAsync(
-            UserExamination entity)
-        {
-            var examination = 
-                await _context.Examinations.FindAsync(entity.ExaminationId);
-
-            //todo move to repository 
-            return new UserExaminationDto(
-                 userExaminationEntity: entity,
-                 examinationEntity: examination,
-                 branchEntity: await _context.HealthFacilityBranches
-                     .FindAsync(examination.HealthFacilityBranchId),
-                 medTestEntity: await _context.Tests.FindAsync(examination.TestId),
-                 doctorEntity: await _context.Doctors.FindAsync(entity.DoctorId),
-                 userEntity: await _context.Users.FindAsync(entity.UserId)
-             );
-        }
 
         private UserExamination ConvertToEntity(UserExaminationDto dto)
             => new()

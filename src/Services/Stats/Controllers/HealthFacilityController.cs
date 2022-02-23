@@ -15,12 +15,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class HealthFacilityController
         : AbstractController<HealthFacility, HealthFacilityDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public HealthFacilityController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public HealthFacilityController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/HealthFacility
         [HttpGet]
@@ -29,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.HealthFacilities.ToListAsync();
 
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<HealthFacility, HealthFacilityDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -48,7 +43,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<HealthFacility, HealthFacilityDto>(entity));
         }
 
         // PUT: api/HealthFacility/5
@@ -64,7 +59,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var modified = await _context.HealthFacilities.FindAsync(id);
 
             modified.Name = dto.Name; //todo bad practice
-            modified.Address = dto.Address; 
+            modified.Address = dto.Address;
 
             _context.Entry(modified).State = EntityState.Modified;
 
@@ -101,7 +96,7 @@ namespace HealthPanel.Services.Stats.Controllers
 
             return CreatedAtAction(nameof(Post),
                 new { id = newEntity.Id },
-                await this.EntityToDtoAsync(newEntity));
+                await _mapper.Map<HealthFacility, HealthFacilityDto>(newEntity));
         }
 
         // DELETE: api/HealthFacility/5
@@ -122,9 +117,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.HealthFacilities.Any(e => e.Id == id);
-
-        protected override async Task<HealthFacilityDto> EntityToDtoAsync(HealthFacility entity)
-            => new HealthFacilityDto(entity);
 
         private HealthFacility ConvertToEntity(HealthFacilityDto dto)
             => new()

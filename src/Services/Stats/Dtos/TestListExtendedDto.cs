@@ -20,6 +20,14 @@ namespace HealthPanel.Services.Stats.Dtos
         public TestListType Type { get; set; }
         public int Index { get; set; }
         public object Item { get; set; }
+
+        public TestListItemDto() { }
+        public TestListItemDto(int index, TestListType type, object item)
+        {
+            this.Index = index;
+            this.Type = type;
+            this.Item = item;
+        }
     }
 
     public class TestListExtendedDto : IDto

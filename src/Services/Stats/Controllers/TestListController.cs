@@ -15,12 +15,7 @@ namespace HealthPanel.Services.Stats.Controllers
     public class TestListController
         : AbstractController<TestList, TestListDto>
     {
-        private readonly HealthPanelDbContext _context;
-
-        public TestListController(HealthPanelDbContext context)
-        {
-            _context = context;
-        }
+        public TestListController(HealthPanelDbContext context) : base(context) { }
 
         // GET: api/TestList
         [HttpGet]
@@ -29,7 +24,7 @@ namespace HealthPanel.Services.Stats.Controllers
             var entities = await _context.TestLists.ToListAsync();
 
             var dtos = entities
-                .Select(async p => await this.EntityToDtoAsync(p))
+                .Select(async p => await _mapper.Map<TestList, TestListDto>(p))
                 .Select(t => t.Result)
                 .Where(i => i != null)
                 .ToList();
@@ -48,7 +43,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return NotFound();
             }
 
-            return Ok(await this.EntityToDtoAsync(entity));
+            return Ok(await _mapper.Map<TestList, TestListDto>(entity));
         }
 
         // PUT: api/TestList/5
@@ -99,7 +94,8 @@ namespace HealthPanel.Services.Stats.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
-                new { id = newEntity.Id }, await this.EntityToDtoAsync(newEntity));
+                new { id = newEntity.Id }, 
+                await _mapper.Map<TestList, TestListDto>(newEntity));
         }
 
         // DELETE: api/TestList/5
@@ -120,9 +116,6 @@ namespace HealthPanel.Services.Stats.Controllers
 
         protected override bool Exists(int id)
             => _context.TestLists.Any(e => e.Id == id);
-
-        protected override async Task<TestListDto> EntityToDtoAsync(TestList entity)
-            => new TestListDto(entity);
 
         private TestList ConvertToEntity(TestListDto dto)
             => new()
