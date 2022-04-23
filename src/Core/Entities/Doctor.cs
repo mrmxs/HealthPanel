@@ -8,6 +8,7 @@ namespace HealthPanel.Core.Entities
     {
         public int Id { get; internal set; }
         public string Name { get; set; }
+        public string Profession { get; set; }
         public int HealthFacilityBranchId { get; set; }
     }
 }
