@@ -3,3 +3,4 @@ obj/
 bin/
 token.json/
 appsettings.Development.json
+.*

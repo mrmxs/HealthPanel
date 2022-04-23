@@ -6,6 +6,7 @@ namespace HealthPanel.Services.Stats.Dtos
     {       
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Profession { get; set; }
         public int HealthFacilityBranchId { get; set; }
 
 
@@ -17,6 +18,7 @@ namespace HealthPanel.Services.Stats.Dtos
             this.Name = doctorEntity.Name;
             this.HealthFacilityBranchId = 
                 doctorEntity.HealthFacilityBranchId;
+            this.Profession = doctorEntity.Profession;
         }
     }
 }
