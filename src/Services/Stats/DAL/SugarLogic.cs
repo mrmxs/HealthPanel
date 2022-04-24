@@ -119,7 +119,7 @@ namespace HealthPanel.Services.Stats.DAL
     public class HospitalizationSugarLogic : AbstractSugarLogic<Hospitalization>
     {
         public HospitalizationSugarLogic(HealthPanelDbContext context) : base(context) { }
-        public override async Task<Hospitalization> Id(int id) => await _context.Hospitalization.FindAsync(id);
+        public override async Task<Hospitalization> Id(int id) => await _context.Hospitalizations.FindAsync(id);
     }
 
     #endregion

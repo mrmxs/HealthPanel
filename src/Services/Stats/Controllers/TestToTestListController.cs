@@ -65,6 +65,7 @@ namespace HealthPanel.Services.Stats.Controllers
             modified.ExaminationId = dto.ExaminationId;
             modified.TestPanelId = dto.TestPanelId;
             modified.LabTestPanelId = dto.LabTestPanelId;
+            modified.TTL = dto.TTL;
             modified.Index = dto.Index;
 
             _context.Entry(modified).State = EntityState.Modified;
@@ -133,6 +134,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 ExaminationId = dto.ExaminationId,
                 TestPanelId = dto.TestPanelId,
                 LabTestPanelId = dto.LabTestPanelId,
+                TTL = dto.TTL,
                 Index = dto.Index,
             };
     }

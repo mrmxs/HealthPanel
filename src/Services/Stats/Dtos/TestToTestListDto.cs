@@ -1,3 +1,4 @@
+using System;
 using HealthPanel.Core.Entities;
 
 namespace HealthPanel.Services.Stats.Dtos
@@ -11,6 +12,7 @@ namespace HealthPanel.Services.Stats.Dtos
         public int ExaminationId { get; set; }
         public int TestPanelId { get; set; }
         public int LabTestPanelId { get; set; }
+        public TimeSpan TTL { get; set; }
         public int Index { get; set; }
 
         public TestToTestListDto() { }
@@ -24,6 +26,7 @@ namespace HealthPanel.Services.Stats.Dtos
             this.ExaminationId = entity.ExaminationId;
             this.TestPanelId = entity.TestPanelId;
             this.LabTestPanelId = entity.LabTestPanelId;
+            this.TTL = entity.TTL;
             this.Index = entity.Index;
         }
     }

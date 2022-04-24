@@ -21,7 +21,7 @@ namespace HealthPanel.Infrastructure.Data
         public DbSet<HealthFacilityBranch> HealthFacilityBranches { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
-        public DbSet<Hospitalization> Hospitalization { get; set; }
+        public DbSet<Hospitalization> Hospitalizations { get; set; }
 
         public DbSet<User> Users { get; set; }
         public DbSet<UserLabTest> UserLabTests { get; set; }

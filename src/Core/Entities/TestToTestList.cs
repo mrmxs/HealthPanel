@@ -15,6 +15,7 @@ namespace HealthPanel.Core.Entities
         public int ExaminationId { get; set; }
         public int TestPanelId { get; set; }
         public int LabTestPanelId { get; set; }
+        public TimeSpan TTL { get; set; }
         public int Index { get; set; }
     }
 }
