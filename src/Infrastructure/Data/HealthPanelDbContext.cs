@@ -17,13 +17,15 @@ namespace HealthPanel.Infrastructure.Data
         public DbSet<TestList> TestLists { get; set; }
         public DbSet<TestToTestList> TestsToTestList { get; set; }
 
-        public DbSet<UserLabTest> UserLabTests { get; set; }
-        public DbSet<UserExamination> UserExaminations { get; set; }
         public DbSet<HealthFacility> HealthFacilities { get; set; }
         public DbSet<HealthFacilityBranch> HealthFacilityBranches { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Hospitalization> Hospitalization { get; set; }
+
         public DbSet<User> Users { get; set; }
+        public DbSet<UserLabTest> UserLabTests { get; set; }
+        public DbSet<UserExamination> UserExaminations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder
