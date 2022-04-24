@@ -185,6 +185,11 @@ namespace HealthPanel.Services.Stats.DAL
              );
         }
 
+        public async Task<UserHospitalizationDto> Map<T, D>(UserHospitalization entity)
+            where T : UserHospitalization
+            where D : UserHospitalizationDto
+            => new(entity);
+
         #endregion
 
         #region Health Facility

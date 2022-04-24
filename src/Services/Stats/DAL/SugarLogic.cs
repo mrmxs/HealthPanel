@@ -21,6 +21,8 @@ namespace HealthPanel.Services.Stats.DAL
         public abstract Task<T> Id(int id);
     }
 
+    #region Basic Types
+
     public class TestsSugarLogic : AbstractSugarLogic<MedTest>
     {
         public TestsSugarLogic(HealthPanelDbContext context) : base(context) { }
@@ -64,6 +66,16 @@ namespace HealthPanel.Services.Stats.DAL
             => await _context.TestsToTestList.FindAsync(id);
     }
 
+    #endregion
+
+    #region User Types
+
+    public class UserSugarLogic : AbstractSugarLogic<User>
+    {
+        public UserSugarLogic(HealthPanelDbContext context) : base(context) { }
+        public override async Task<User> Id(int id) => await _context.Users.FindAsync(id);
+    }
+
     public class UserLabTestSugarLogic : AbstractSugarLogic<UserLabTest>
     {
         public UserLabTestSugarLogic(HealthPanelDbContext context) : base(context) { }
@@ -75,6 +87,16 @@ namespace HealthPanel.Services.Stats.DAL
         public UserExaminationSugarLogic(HealthPanelDbContext context) : base(context) { }
         public override async Task<UserExamination> Id(int id) => await _context.UserExaminations.FindAsync(id);
     }
+
+    public class UserHospitalizationSugarLogic : AbstractSugarLogic<UserHospitalization>
+    {
+        public UserHospitalizationSugarLogic(HealthPanelDbContext context) : base(context) { }
+        public override async Task<UserHospitalization> Id(int id) => await _context.UserHospitalizations.FindAsync(id);
+    }
+
+    #endregion
+
+    #region Hospital Treatment
 
     public class HealthFacilitySugarLogic : AbstractSugarLogic<HealthFacility>
     {
@@ -94,9 +116,11 @@ namespace HealthPanel.Services.Stats.DAL
         public override async Task<Doctor> Id(int id) => await _context.Doctors.FindAsync(id);
     }
 
-    public class UserSugarLogic : AbstractSugarLogic<User>
+    public class HospitalizationSugarLogic : AbstractSugarLogic<Hospitalization>
     {
-        public UserSugarLogic(HealthPanelDbContext context) : base(context) { }
-        public override async Task<User> Id(int id) => await _context.Users.FindAsync(id);
+        public HospitalizationSugarLogic(HealthPanelDbContext context) : base(context) { }
+        public override async Task<Hospitalization> Id(int id) => await _context.Hospitalization.FindAsync(id);
     }
+
+    #endregion
 }
