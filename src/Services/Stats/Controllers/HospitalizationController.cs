@@ -20,7 +20,7 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet]
         public override async Task<ActionResult<IEnumerable<HospitalizationDto>>> Get()
         {
-            var entities = await _context.Hospitalization.ToListAsync();
+            var entities = await _context.Hospitalizations.ToListAsync();
 
             var dtos = entities
                 .Select(async p =>
@@ -36,7 +36,7 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpGet("{id}")]
         public override async Task<ActionResult<HospitalizationDto>> Get(int id)
         {
-            var entity = await _context.Hospitalization.FindAsync(id);
+            var entity = await _context.Hospitalizations.FindAsync(id);
 
             if (entity == null)
             {
@@ -56,7 +56,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-            var modified = await _context.Hospitalization.FindAsync(id);
+            var modified = await _context.Hospitalizations.FindAsync(id);
 
             modified.Name = dto.Name; //todo bad practice
             modified.HealthFacilityBranchId = dto.HealthFacilityBranchId;
@@ -92,7 +92,7 @@ namespace HealthPanel.Services.Stats.Controllers
         {
             var entity = this.ConvertToEntity(dto);
 
-            _context.Hospitalization.Add(entity);
+            _context.Hospitalizations.Add(entity);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Post),
@@ -104,20 +104,20 @@ namespace HealthPanel.Services.Stats.Controllers
         [HttpDelete("{id}")]
         public override async Task<IActionResult> Delete(int id)
         {
-            var entity = await _context.Hospitalization.FindAsync(id);
+            var entity = await _context.Hospitalizations.FindAsync(id);
             if (entity == null)
             {
                 return NotFound();
             }
 
-            _context.Hospitalization.Remove(entity);
+            _context.Hospitalizations.Remove(entity);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         protected override bool Exists(int id)
-            => _context.Hospitalization.Any(e => e.Id == id);
+            => _context.Hospitalizations.Any(e => e.Id == id);
 
         private Hospitalization ConvertToEntity(HospitalizationDto dto)
             => new()
