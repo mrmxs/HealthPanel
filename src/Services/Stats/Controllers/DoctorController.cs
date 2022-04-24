@@ -56,11 +56,11 @@ namespace HealthPanel.Services.Stats.Controllers
                 return BadRequest();
             }
 
-
             var modified = await _context.Doctors.FindAsync(id);
 
             modified.Name = dto.Name; //todo bad practice
             modified.HealthFacilityBranchId = dto.HealthFacilityBranchId;
+            modified.Profession = dto.Profession;
             _context.Entry(modified).State = EntityState.Modified;
 
             try
@@ -122,6 +122,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 // Id = dto.Id,
                 Name = dto.Name,
                 HealthFacilityBranchId = dto.HealthFacilityBranchId,
+                Profession = dto.Profession,
             };
     }
 }
