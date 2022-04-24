@@ -45,6 +45,9 @@ namespace HealthPanel.Services.Stats.DAL
         Task<UserExaminationDto> Map<T, D>(UserExamination entity)
             where T : UserExamination
             where D : UserExaminationDto;
+        Task<UserHospitalizationDto> Map<T, D>(UserHospitalization entity)
+            where T : UserHospitalization
+            where D : UserHospitalizationDto;
 
         Task<HealthFacilityDto> Map<T, D>(HealthFacility entity)
             where T : HealthFacility

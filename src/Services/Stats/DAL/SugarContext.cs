@@ -15,12 +15,16 @@ namespace HealthPanel.Services.Stats.DAL
         TestListSugarLogic TLs { get; }
         TestToTestListSugarLogic TstTL { get; }
 
+        UserSugarLogic Usrs { get; }
         UserLabTestSugarLogic ULTests { get; }
         UserExaminationSugarLogic UExams { get; }
+        UserHospitalizationSugarLogic UHspzn { get; }
+
+
         HealthFacilitySugarLogic HFs { get; }
         HealthFacilityBranchSugarLogic HFBs { get; }
         DoctorSugarLogic Docs { get; }
-        UserSugarLogic Usrs { get; }
+        HospitalizationSugarLogic Hspzn { get; }
     }
 
     /// <summary>
@@ -36,12 +40,15 @@ namespace HealthPanel.Services.Stats.DAL
         public TestListSugarLogic TLs { get; }
         public TestToTestListSugarLogic TstTL { get; }
 
+        public UserSugarLogic Usrs { get; }
         public UserLabTestSugarLogic ULTests { get; }
         public UserExaminationSugarLogic UExams { get; }
+        public UserHospitalizationSugarLogic UHspzn { get; }
+
         public HealthFacilitySugarLogic HFs { get; }
         public HealthFacilityBranchSugarLogic HFBs { get; }
         public DoctorSugarLogic Docs { get; }
-        public UserSugarLogic Usrs { get; }
+        public HospitalizationSugarLogic Hspzn { get; }
 
         public SugarContext(HealthPanelDbContext context)
         {
@@ -56,10 +63,12 @@ namespace HealthPanel.Services.Stats.DAL
             Usrs = new UserSugarLogic(context);
             ULTests = new UserLabTestSugarLogic(context);
             UExams = new UserExaminationSugarLogic(context);
+            UHspzn = new UserHospitalizationSugarLogic(context);
 
             HFs = new HealthFacilitySugarLogic(context);
             HFBs = new HealthFacilityBranchSugarLogic(context);
             Docs = new DoctorSugarLogic(context);
+            Hspzn = new HospitalizationSugarLogic(context);
         }
     }
 

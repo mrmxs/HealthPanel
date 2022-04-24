@@ -26,6 +26,7 @@ namespace HealthPanel.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserLabTest> UserLabTests { get; set; }
         public DbSet<UserExamination> UserExaminations { get; set; }
+        public DbSet<UserHospitalization> UserHospitalizations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder
