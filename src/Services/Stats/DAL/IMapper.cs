@@ -58,6 +58,9 @@ namespace HealthPanel.Services.Stats.DAL
         Task<DoctorDto> Map<T, D>(Doctor entity)
             where T : Doctor
             where D : DoctorDto;
+        Task<HospitalizationDto> Map<T, D>(Hospitalization entity)
+        where T : Hospitalization
+        where D : HospitalizationDto;
 
         #endregion
 

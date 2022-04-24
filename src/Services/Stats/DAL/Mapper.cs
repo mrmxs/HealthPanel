@@ -38,6 +38,7 @@ namespace HealthPanel.Services.Stats.DAL
                 { typeof(HealthFacilityBranch), 11 },
                 { typeof(Doctor), 12 },
                 { typeof(Department), 13 },
+                { typeof(Hospitalization), 14 },
             };
 
             return types[entity.GetType()] switch
@@ -59,6 +60,7 @@ namespace HealthPanel.Services.Stats.DAL
                 11 => await this.Map<HealthFacilityBranch, HealthFacilityBranchDto>(entity as HealthFacilityBranch),
                 13 => await this.Map<Department, DepartmentDto>(entity as Department),
                 12 => await this.Map<Doctor, DoctorDto>(entity as Doctor),
+                14 => await this.Map<Hospitalization, HospitalizationDto>(entity as Hospitalization),
 
                 _ => throw new Exception(),
             };
@@ -204,6 +206,11 @@ namespace HealthPanel.Services.Stats.DAL
         public async Task<DoctorDto> Map<T, D>(Doctor entity)
             where T : Doctor
             where D : DoctorDto
+            => new(entity);
+
+        public async Task<HospitalizationDto> Map<T, D>(Hospitalization entity)
+            where T : Hospitalization
+            where D : HospitalizationDto
             => new(entity);
 
         #endregion
