@@ -52,7 +52,9 @@ namespace HealthPanel.Services.Stats.DAL
         Task<HealthFacilityBranchDto> Map<T, D>(HealthFacilityBranch entity)
             where T : HealthFacilityBranch
             where D : HealthFacilityBranchDto;
-
+        Task<DepartmentDto> Map<T, D>(Department entity)
+            where T : Department
+            where D : DepartmentDto;
         Task<DoctorDto> Map<T, D>(Doctor entity)
             where T : Doctor
             where D : DoctorDto;
