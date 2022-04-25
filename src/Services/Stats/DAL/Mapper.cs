@@ -105,9 +105,17 @@ namespace HealthPanel.Services.Stats.DAL
         }
 
         public async Task<ConsultationDto> Map<T, D>(Consultation entity)
-            where T : Consultation
-            where D : ConsultationDto
-            => new(entity);
+            where T : Consultation where D : ConsultationDto
+        {
+            var branchEntity = await _sugar.HFBs.Id(entity.HealthFacilityBranchId);
+            var medTestEntity = await _sugar.Tests.Id(entity.TestId);
+
+            return new ConsultationDto(
+                consultatioEntity: entity,
+                branchEntity: branchEntity,
+                medTestEntity: medTestEntity
+            );
+        }
 
         public async Task<TestPanelDto> Map<T, D>(TestPanel entity)
             where T : TestPanel where D : TestPanelDto
@@ -199,7 +207,22 @@ namespace HealthPanel.Services.Stats.DAL
         public async Task<UserConsultationDto> Map<T, D>(UserConsultation entity)
             where T : UserConsultation
             where D : UserConsultationDto
-            => new(entity);
+        {
+            var consultation = await _sugar.Cons.Id(entity.ConsultationId);
+            var branchEntity = await _sugar.HFBs.Id(consultation.HealthFacilityBranchId);
+            var medTestEntity = await _sugar.Tests.Id(consultation.TestId);
+            var doctorEntity = await _sugar.Docs.Id(entity.DoctorId);
+            var userEntity = await _sugar.Usrs.Id(entity.UserId);
+
+            return new UserConsultationDto(
+                 userConsultationEntity: entity,
+                 consultationEntity: consultation,
+                 branchEntity: branchEntity,
+                 medTestEntity: medTestEntity,
+                 doctorEntity: doctorEntity,
+                 userEntity: userEntity
+             );
+        }
 
         public async Task<UserHospitalizationDto> Map<T, D>(UserHospitalization entity)
             where T : UserHospitalization

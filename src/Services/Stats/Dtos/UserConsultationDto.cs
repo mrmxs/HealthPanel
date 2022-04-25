@@ -14,17 +14,33 @@ namespace HealthPanel.Services.Stats.Dtos
         public string Value { get; set; }
         public TestStatus Status { get; set; }
 
+        public ConsultationDto Consultation { get; set; }
+        public DoctorDto Doctor { get; set; }
+        public UserDto User { get; set; }
+
+
         public UserConsultationDto() { }
 
-        public UserConsultationDto(UserConsultation entity)
+        public UserConsultationDto(
+            UserConsultation userConsultationEntity,
+            Consultation consultationEntity,
+            HealthFacilityBranch branchEntity,
+            MedTest medTestEntity,
+            Doctor doctorEntity,
+            User userEntity)
         {
-            this.Id = entity.Id;
-            this.ConsultationId = entity.ConsultationId;
-            this.DoctorId = entity.DoctorId;
-            this.Date = entity.Date;
-            this.UserId = entity.UserId;
-            this.Value = entity.Value;
-            this.Status = entity.Status;
+            this.Id = userConsultationEntity.Id;
+            this.ConsultationId = userConsultationEntity.ConsultationId;
+            this.DoctorId = userConsultationEntity.DoctorId;
+            this.Date = userConsultationEntity.Date;
+            this.UserId = userConsultationEntity.UserId;
+            this.Value = userConsultationEntity.Value;
+            this.Status = userConsultationEntity.Status;
+
+            this.Consultation = new ConsultationDto(
+               consultationEntity, branchEntity, medTestEntity);
+            this.Doctor = new DoctorDto(doctorEntity);
+            this.User = new UserDto(userEntity);
         }
     }
 }
