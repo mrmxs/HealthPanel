@@ -10,6 +10,7 @@ namespace HealthPanel.Services.Stats.Dtos
         public int MedTestId { get; set; }
         public int LabTestId { get; set; }
         public int ExaminationId { get; set; }
+        public int ConsultationId { get; set; }
         public int TestPanelId { get; set; }
         public int LabTestPanelId { get; set; }
         public TimeSpan TTL { get; set; }
@@ -24,6 +25,7 @@ namespace HealthPanel.Services.Stats.Dtos
             this.MedTestId = entity.MedTestId;
             this.LabTestId = entity.LabTestId;
             this.ExaminationId = entity.ExaminationId;
+            this.ConsultationId = entity.ConsultationId;
             this.TestPanelId = entity.TestPanelId;
             this.LabTestPanelId = entity.LabTestPanelId;
             this.TTL = entity.TTL;
