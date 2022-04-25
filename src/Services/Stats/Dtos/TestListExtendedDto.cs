@@ -11,8 +11,9 @@ namespace HealthPanel.Services.Stats.Dtos
         MedTest = 1,
         LabTest = 2,
         Examination = 3,
-        TestPanel = 4,
-        LabTestPanel = 5
+        Consultation = 4,
+        TestPanel = 5,
+        LabTestPanel = 6
     }
 
     public class TestListItemDto : IDto
@@ -84,6 +85,10 @@ namespace HealthPanel.Services.Stats.Dtos
                     this.Index.Add(itemI,
                         new TestListItemDto() { Item = item as ExaminationDto, Type = type, Index = index });
                     break;
+                case TestListType.Consultation:
+                    this.Index.Add(itemI,
+                        new TestListItemDto() { Item = item as ConsultationDto, Type = type, Index = index });
+                    break;
                 case TestListType.TestPanel:
                     this.Index.Add(itemI,
                         new TestListItemDto() { Item = item as TestPanelDto, Type = type, Index = index });
@@ -101,6 +106,7 @@ namespace HealthPanel.Services.Stats.Dtos
         public void Add(MedTestDto item, int index = 0) => this.Add(TestListType.MedTest, item, index);
         public void Add(LabTestDto item, int index = 0) => this.Add(TestListType.LabTest, item, index);
         public void Add(ExaminationDto item, int index = 0) => this.Add(TestListType.Examination, item, index);
+        public void Add(ConsultationDto item, int index = 0) => this.Add(TestListType.Consultation, item, index);
         public void Add(TestPanelDto item, int index = 0) => this.Add(TestListType.TestPanel, item, index);
         public void Add(LabTestPanelDto item, int index = 0) => this.Add(TestListType.LabTestPanel, item, index);
 
