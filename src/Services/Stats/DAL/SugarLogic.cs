@@ -41,6 +41,12 @@ namespace HealthPanel.Services.Stats.DAL
         public override async Task<Examination> Id(int id) => await _context.Examinations.FindAsync(id);
     }
 
+    public class ConsultationSugarLogic : AbstractSugarLogic<Consultation>
+    {
+        public ConsultationSugarLogic(HealthPanelDbContext context) : base(context) { }
+        public override async Task<Consultation> Id(int id) => await _context.Consultations.FindAsync(id);
+    }
+
     public class TestPanelSugarLogic : AbstractSugarLogic<TestPanel>
     {
         public TestPanelSugarLogic(HealthPanelDbContext context) : base(context) { }
@@ -86,6 +92,12 @@ namespace HealthPanel.Services.Stats.DAL
     {
         public UserExaminationSugarLogic(HealthPanelDbContext context) : base(context) { }
         public override async Task<UserExamination> Id(int id) => await _context.UserExaminations.FindAsync(id);
+    }
+
+    public class UserConsultationSugarLogic : AbstractSugarLogic<UserConsultation>
+    {
+        public UserConsultationSugarLogic(HealthPanelDbContext context) : base(context) { }
+        public override async Task<UserConsultation> Id(int id) => await _context.UserConsultations.FindAsync(id);
     }
 
     public class UserHospitalizationSugarLogic : AbstractSugarLogic<UserHospitalization>

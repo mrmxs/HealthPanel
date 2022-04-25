@@ -10,6 +10,7 @@ namespace HealthPanel.Services.Stats.DAL
         TestsSugarLogic Tests { get; }
         LabTestSugarLogic LTests { get; }
         ExaminationSugarLogic Exams { get; }
+        ConsultationSugarLogic Cons { get; }
         TestPanelSugarLogic TPs { get; }
         LabTestPanelSugarLogic LTPs { get; }
         TestListSugarLogic TLs { get; }
@@ -18,6 +19,7 @@ namespace HealthPanel.Services.Stats.DAL
         UserSugarLogic Usrs { get; }
         UserLabTestSugarLogic ULTests { get; }
         UserExaminationSugarLogic UExams { get; }
+        UserConsultationSugarLogic UCons { get; }
         UserHospitalizationSugarLogic UHspzn { get; }
 
 
@@ -35,6 +37,8 @@ namespace HealthPanel.Services.Stats.DAL
         public TestsSugarLogic Tests { get; }
         public LabTestSugarLogic LTests { get; }
         public ExaminationSugarLogic Exams { get; }
+        public ConsultationSugarLogic Cons { get; }
+
         public TestPanelSugarLogic TPs { get; }
         public LabTestPanelSugarLogic LTPs { get; }
         public TestListSugarLogic TLs { get; }
@@ -43,6 +47,7 @@ namespace HealthPanel.Services.Stats.DAL
         public UserSugarLogic Usrs { get; }
         public UserLabTestSugarLogic ULTests { get; }
         public UserExaminationSugarLogic UExams { get; }
+        public UserConsultationSugarLogic UCons { get; }
         public UserHospitalizationSugarLogic UHspzn { get; }
 
         public HealthFacilitySugarLogic HFs { get; }
@@ -55,6 +60,7 @@ namespace HealthPanel.Services.Stats.DAL
             Tests = new TestsSugarLogic(context);
             LTests = new LabTestSugarLogic(context);
             Exams = new ExaminationSugarLogic(context);
+            Cons = new ConsultationSugarLogic(context);
             TPs = new TestPanelSugarLogic(context);
             LTPs = new LabTestPanelSugarLogic(context);
             TLs = new TestListSugarLogic(context);
@@ -63,6 +69,7 @@ namespace HealthPanel.Services.Stats.DAL
             Usrs = new UserSugarLogic(context);
             ULTests = new UserLabTestSugarLogic(context);
             UExams = new UserExaminationSugarLogic(context);
+            UCons = new UserConsultationSugarLogic(context);
             UHspzn = new UserHospitalizationSugarLogic(context);
 
             HFs = new HealthFacilitySugarLogic(context);
