@@ -13,6 +13,7 @@ namespace HealthPanel.Core.Entities
         public int MedTestId { get; set; } // EX: список для госпитализации
         public int LabTestId { get; set; }
         public int ExaminationId { get; set; }
+        public int ConsultationId { get; set; }
         public int TestPanelId { get; set; }
         public int LabTestPanelId { get; set; }
         public TimeSpan TTL { get; set; }

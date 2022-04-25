@@ -63,6 +63,7 @@ namespace HealthPanel.Services.Stats.Controllers
             modified.MedTestId = dto.MedTestId;
             modified.LabTestId = dto.LabTestId;
             modified.ExaminationId = dto.ExaminationId;
+            modified.ConsultationId = dto.ConsultationId;
             modified.TestPanelId = dto.TestPanelId;
             modified.LabTestPanelId = dto.LabTestPanelId;
             modified.TTL = dto.TTL;
@@ -132,6 +133,7 @@ namespace HealthPanel.Services.Stats.Controllers
                 MedTestId = dto.MedTestId,
                 LabTestId = dto.LabTestId,
                 ExaminationId = dto.ExaminationId,
+                ConsultationId = dto.ConsultationId,
                 TestPanelId = dto.TestPanelId,
                 LabTestPanelId = dto.LabTestPanelId,
                 TTL = dto.TTL,
