@@ -4,6 +4,7 @@ namespace HealthPanel.Core.Enums
     {
         None = 0,
         Done = 1,
-        Planned = 2
+        Planned = 2,
+        Canceled = 3,
     }
 }

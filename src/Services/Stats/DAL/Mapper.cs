@@ -39,6 +39,9 @@ namespace HealthPanel.Services.Stats.DAL
                 { typeof(Doctor), 12 },
                 { typeof(Department), 13 },
                 { typeof(Hospitalization), 14 },
+                { typeof(UserHospitalization), 15 },
+                { typeof(Consultation), 16 },
+                { typeof(UserConsultation), 17 },
             };
 
             return types[entity.GetType()] switch
@@ -46,6 +49,7 @@ namespace HealthPanel.Services.Stats.DAL
                 0 => await this.Map<MedTest, MedTestDto>(entity as MedTest),
                 1 => await this.Map<LabTest, LabTestDto>(entity as LabTest),
                 2 => await this.Map<Examination, ExaminationDto>(entity as Examination),
+                16 => await this.Map<Consultation, ConsultationDto>(entity as Consultation),
                 3 => await this.Map<TestPanel, TestPanelDto>(entity as TestPanel),
                 4 => await this.Map<LabTestPanel, LabTestPanelDto>(entity as LabTestPanel),
 
@@ -55,6 +59,8 @@ namespace HealthPanel.Services.Stats.DAL
                 7 => await this.Map<User, UserDto>(entity as User),
                 8 => await this.Map<UserLabTest, UserLabTestDto>(entity as UserLabTest),
                 9 => await this.Map<UserExamination, UserExaminationDto>(entity as UserExamination),
+                17 => await this.Map<UserConsultation, UserConsultationDto>(entity as UserConsultation),
+                15 => await this.Map<UserHospitalization, UserHospitalizationDto>(entity as UserHospitalization),
 
                 10 => await this.Map<HealthFacility, HealthFacilityDto>(entity as HealthFacility),
                 11 => await this.Map<HealthFacilityBranch, HealthFacilityBranchDto>(entity as HealthFacilityBranch),
@@ -93,6 +99,19 @@ namespace HealthPanel.Services.Stats.DAL
 
             return new ExaminationDto(
                 examinationEntity: entity,
+                branchEntity: branchEntity,
+                medTestEntity: medTestEntity
+            );
+        }
+
+        public async Task<ConsultationDto> Map<T, D>(Consultation entity)
+            where T : Consultation where D : ConsultationDto
+        {
+            var branchEntity = await _sugar.HFBs.Id(entity.HealthFacilityBranchId);
+            var medTestEntity = await _sugar.Tests.Id(entity.TestId);
+
+            return new ConsultationDto(
+                consultatioEntity: entity,
                 branchEntity: branchEntity,
                 medTestEntity: medTestEntity
             );
@@ -178,6 +197,26 @@ namespace HealthPanel.Services.Stats.DAL
             return new UserExaminationDto(
                  userExaminationEntity: entity,
                  examinationEntity: examination,
+                 branchEntity: branchEntity,
+                 medTestEntity: medTestEntity,
+                 doctorEntity: doctorEntity,
+                 userEntity: userEntity
+             );
+        }
+
+        public async Task<UserConsultationDto> Map<T, D>(UserConsultation entity)
+            where T : UserConsultation
+            where D : UserConsultationDto
+        {
+            var consultation = await _sugar.Cons.Id(entity.ConsultationId);
+            var branchEntity = await _sugar.HFBs.Id(consultation.HealthFacilityBranchId);
+            var medTestEntity = await _sugar.Tests.Id(consultation.TestId);
+            var doctorEntity = await _sugar.Docs.Id(entity.DoctorId);
+            var userEntity = await _sugar.Usrs.Id(entity.UserId);
+
+            return new UserConsultationDto(
+                 userConsultationEntity: entity,
+                 consultationEntity: consultation,
                  branchEntity: branchEntity,
                  medTestEntity: medTestEntity,
                  doctorEntity: doctorEntity,

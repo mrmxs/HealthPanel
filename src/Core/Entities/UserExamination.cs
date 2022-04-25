@@ -10,14 +10,14 @@ namespace HealthPanel.Core.Entities
     /// </summary>
     public class UserExamination : IEntity
     {
-        public int Id { get; internal set; }        
+        public int Id { get; internal set; }
         [Required]
-        public int ExaminationId { get; set; } 
-        [Required] 
+        public int ExaminationId { get; set; }
+        [Required]
         public int UserId { get; set; }
         public int DoctorId { get; set; }
         public DateTime Date { get; set; }
         public string Value { get; set; }
-        public TestStatus Status { get; set; }        
+        public TestStatus Status { get; set; }
     }
 }
