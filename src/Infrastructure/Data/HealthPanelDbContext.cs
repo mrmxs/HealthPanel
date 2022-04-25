@@ -12,6 +12,7 @@ namespace HealthPanel.Infrastructure.Data
         public DbSet<MedTest> Tests { get; set; }
         public DbSet<LabTest> LabTests { get; set; }
         public DbSet<Examination> Examinations { get; set; }
+        public DbSet<Consultation> Consultations { get; set; }
         public DbSet<TestPanel> TestPanels { get; set; }
         public DbSet<LabTestPanel> LabTestPanels { get; set; }
         public DbSet<TestList> TestLists { get; set; }
@@ -26,6 +27,7 @@ namespace HealthPanel.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserLabTest> UserLabTests { get; set; }
         public DbSet<UserExamination> UserExaminations { get; set; }
+        public DbSet<UserConsultation> UserConsultations { get; set; }
         public DbSet<UserHospitalization> UserHospitalizations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
