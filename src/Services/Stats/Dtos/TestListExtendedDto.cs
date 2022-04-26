@@ -22,14 +22,17 @@ namespace HealthPanel.Services.Stats.Dtos
         public TestListType Type { get; set; }
         public int Index { get; set; }
         public object Item { get; set; }
+        public TimeSpan TTL { get; set; }
 
         public TestListItemDto() { }
-        public TestListItemDto(int id, int index, TestListType type, object item)
+        public TestListItemDto(int id, int index,
+            TestListType type, object item, TimeSpan ttl)
         {
             this.Id = id;
             this.Index = index;
             this.Type = type;
             this.Item = item;
+            this.TTL = ttl;
         }
     }
 
@@ -67,35 +70,39 @@ namespace HealthPanel.Services.Stats.Dtos
             return this;
         }
 
-        public void Add(TestListType type, IDto item, int index = 0)
+        public void Add(TestListType type, IDto item,
+            TimeSpan ttl, int index = 0)
         {
-            var itemI = $"{index}_{type.GetDisplayName()}{item.Id}";
+            var itemI = string.Format("{0}_{1}{2}",
+                index.ToString("0000"),
+                type.GetDisplayName(),
+                item.Id);
 
             switch (type)
             {
                 case TestListType.MedTest:
-                    this.Index.Add(itemI,
-                        new TestListItemDto() { Item = item as MedTestDto, Type = type, Index = index });
+                    this.Index.Add(itemI, new TestListItemDto()
+                    { Item = item as MedTestDto, Type = type, Index = index, TTL = ttl });
                     break;
                 case TestListType.LabTest:
-                    this.Index.Add(itemI,
-                        new TestListItemDto() { Item = item as LabTestDto, Type = type, Index = index });
+                    this.Index.Add(itemI, new TestListItemDto()
+                    { Item = item as LabTestDto, Type = type, Index = index, TTL = ttl });
                     break;
                 case TestListType.Examination:
-                    this.Index.Add(itemI,
-                        new TestListItemDto() { Item = item as ExaminationDto, Type = type, Index = index });
+                    this.Index.Add(itemI, new TestListItemDto()
+                    { Item = item as ExaminationDto, Type = type, Index = index, TTL = ttl });
                     break;
                 case TestListType.Consultation:
-                    this.Index.Add(itemI,
-                        new TestListItemDto() { Item = item as ConsultationDto, Type = type, Index = index });
+                    this.Index.Add(itemI, new TestListItemDto()
+                    { Item = item as ConsultationDto, Type = type, Index = index, TTL = ttl });
                     break;
                 case TestListType.TestPanel:
-                    this.Index.Add(itemI,
-                        new TestListItemDto() { Item = item as TestPanelDto, Type = type, Index = index });
+                    this.Index.Add(itemI, new TestListItemDto()
+                    { Item = item as TestPanelDto, Type = type, Index = index, TTL = ttl });
                     break;
                 case TestListType.LabTestPanel:
-                    this.Index.Add(itemI,
-                        new TestListItemDto() { Item = item as LabTestPanelDto, Type = type, Index = index });
+                    this.Index.Add(itemI, new TestListItemDto()
+                    { Item = item as LabTestPanelDto, Type = type, Index = index, TTL = ttl });
                     break;
 
                 default:
@@ -103,12 +110,18 @@ namespace HealthPanel.Services.Stats.Dtos
             }
         }
 
-        public void Add(MedTestDto item, int index = 0) => this.Add(TestListType.MedTest, item, index);
-        public void Add(LabTestDto item, int index = 0) => this.Add(TestListType.LabTest, item, index);
-        public void Add(ExaminationDto item, int index = 0) => this.Add(TestListType.Examination, item, index);
-        public void Add(ConsultationDto item, int index = 0) => this.Add(TestListType.Consultation, item, index);
-        public void Add(TestPanelDto item, int index = 0) => this.Add(TestListType.TestPanel, item, index);
-        public void Add(LabTestPanelDto item, int index = 0) => this.Add(TestListType.LabTestPanel, item, index);
+        public void Add(MedTestDto item, TimeSpan ttl, int index = 0)
+            => this.Add(TestListType.MedTest, item, ttl, index);
+        public void Add(LabTestDto item, TimeSpan ttl, int index = 0)
+            => this.Add(TestListType.LabTest, item, ttl, index);
+        public void Add(ExaminationDto item, TimeSpan ttl, int index = 0)
+            => this.Add(TestListType.Examination, item, ttl, index);
+        public void Add(ConsultationDto item, TimeSpan ttl, int index = 0)
+            => this.Add(TestListType.Consultation, item, ttl, index);
+        public void Add(TestPanelDto item, TimeSpan ttl, int index = 0)
+            => this.Add(TestListType.TestPanel, item, ttl, index);
+        public void Add(LabTestPanelDto item, TimeSpan ttl, int index = 0)
+            => this.Add(TestListType.LabTestPanel, item, ttl, index);
 
     }
 }

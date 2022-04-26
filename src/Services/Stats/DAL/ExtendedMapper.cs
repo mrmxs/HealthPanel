@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HealthPanel.Core.Entities;
-using HealthPanel.Infrastructure.Data;
 using HealthPanel.Services.Stats.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,7 +54,8 @@ namespace HealthPanel.Services.Stats.DAL
                     id: p.Id,
                     index: p.Index,
                     type: type,
-                    item: await this.Map(entity)
+                    item: await this.Map(entity),
+                    ttl: p.TTL
                 );
             }).Select(t => t.Result);
         }
